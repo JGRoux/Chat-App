@@ -1,6 +1,6 @@
 ﻿namespace Chat_App
 {
-    partial class Form1
+    partial class MainWindow
     {
         /// <summary>
         /// Variable nécessaire au concepteur.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.alexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,7 +63,7 @@
             // alexToolStripMenuItem
             // 
             this.alexToolStripMenuItem.Name = "alexToolStripMenuItem";
-            this.alexToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.alexToolStripMenuItem.Size = new System.Drawing.Size(96, 22);
             this.alexToolStripMenuItem.Text = "Alex";
             // 
             // tabControl1
