@@ -10,6 +10,8 @@ namespace Chat_Server
     {
         static void Main(string[] args)
         {
+            Console.WriteLine(SharedLibrary.Message.jg); //ALLER LALAAAAAAAAAAAAAAA POPOPOPOPOPOPOPOPOPOPOP
+            while (true) ;
         }
     }
 }

@@ -92,6 +92,12 @@
   <ItemGroup>
     <Content Include="logo.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mouhahaha\Shared Library.csproj">
+      <Project>{0db7b1bb-5001-40ae-8db0-b0075d52a908}</Project>
+      <Name>Shared Library</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
