@@ -22,8 +22,8 @@ namespace Chat_Server
     public class Server
     {
         private Socket serverSocket;
+        private ArrayList clientSocketList = new ArrayList();
 
-        public ArrayList socketList = new ArrayList();
         //Liste de correspondance entre les pseudos et leurs sockets
         public Hashtable NickList = new Hashtable();
         ArrayList lectureList = new ArrayList();
@@ -50,17 +50,17 @@ namespace Chat_Server
             //Le serveur aura pour adresse la première adresse disponible
             IPAddress ipAddress = ipHostEntry.AddressList[0];
             Console.WriteLine("IP : " + ipAddress.ToString());
-            Socket Client = null;
+            Socket clientSocket = null;
             //Création de la socket coté serveur
-            Socket ServerSocket = new Socket(AddressFamily.InterNetwork,
+            this.serverSocket = new Socket(AddressFamily.InterNetwork,
                              SocketType.Stream,
                              ProtocolType.Tcp); //On utilise le protocole TCP
             try
             {
                 //On lie la socket au serveur, port 8000
-                ServerSocket.Bind(new IPEndPoint(ipAddress, 8000));
+                this.serverSocket.Bind(new IPEndPoint(ipAddress, 8000));
                 //On la positionne en écoute
-                ServerSocket.Listen(10);
+                this.serverSocket.Listen(10);
                 //Démarrage du thread avant la première connexion client
                 Thread getReadClients = new Thread(new ThreadStart(getRead));
                 getReadClients.Start();
@@ -72,10 +72,10 @@ namespace Chat_Server
                     Console.WriteLine("Attente d'une nouvelle connexion...");
                     //L'exécution du thread courant est bloquée jusqu'à ce qu'un
                     //nouveau client se connecte
-                    Client = ServerSocket.Accept();
-                    Console.WriteLine("Nouveau client:" + Client.GetHashCode());
+                    clientSocket = this.serverSocket.Accept();
+                    Console.WriteLine("Nouveau client:" + clientSocket.GetHashCode());
                     //Ajout de la socket du nouveau client, à la liste des scokets
-                    socketList.Add(Client);
+                    clientSocketList.Add(clientSocket);
                 }
             }
             catch (SocketException E)
@@ -97,16 +97,16 @@ namespace Chat_Server
             while (true)
             {
 
-                for (int i = 0; i < socketList.Count; i++)
+                for (int i = 0; i < clientSocketList.Count; i++)
                 {
                     //Renvoie vrai si la socket passée est à l'état demandé
                     //Si la socket est en lecture, et qu'il n'y a pas de bits disponibles, c'est que la connexion est terminée
-                    if (((Socket)socketList[i]).Poll(10, SelectMode.SelectRead) && ((Socket)socketList[i]).Available == 0)
+                    if (((Socket)clientSocketList[i]).Poll(10, SelectMode.SelectRead) && ((Socket)clientSocketList[i]).Available == 0)
                     {
-                            Console.WriteLine("Client " + ((Socket)socketList[i]).GetHashCode() + " déconnecté");
-                            removeNick(((Socket)socketList[i]));
-                            ((Socket)socketList[i]).Close();
-                            socketList.Remove(((Socket)socketList[i]));
+                            Console.WriteLine("Client " + ((Socket)clientSocketList[i]).GetHashCode() + " déconnecté");
+                            removeNick(((Socket)clientSocketList[i]));
+                            ((Socket)clientSocketList[i]).Close();
+                            clientSocketList.Remove(((Socket)clientSocketList[i]));
                             i--;
                      }
                 }
@@ -114,6 +114,7 @@ namespace Chat_Server
             }
 
         }
+
         private void removeNick(Socket Resource)
         {
             Console.Write("DECONNEXION DE:" + NickList[Resource]);
@@ -132,9 +133,9 @@ namespace Chat_Server
                 //On vide la liste de sockets connectées
                 lectureList.Clear();
                 //Et on la reremplit avec les sockets actuellement connectées
-                for (int i = 0; i < socketList.Count; i++)
+                for (int i = 0; i < clientSocketList.Count; i++)
                 {
-                    lectureList.Add((Socket)socketList[i]);
+                    lectureList.Add((Socket)clientSocketList[i]);
                 }
 
                 if (lectureList.Count > 0)
@@ -200,35 +201,37 @@ namespace Chat_Server
             }
 
         }
+
         private void sendMsg()
         {
 
-            for (int i = 0; i < socketList.Count; i++)
+            for (int i = 0; i < clientSocketList.Count; i++)
             {
-                if (((Socket)socketList[i]).Connected)
+                if (((Socket)clientSocketList[i]).Connected)
                 {
                     try
                     {
-                        int bytesSent = ((Socket)socketList[i]).Send(msg, msg.Length, SocketFlags.None);
+                        int bytesSent = ((Socket)clientSocketList[i]).Send(msg, msg.Length, SocketFlags.None);
                     }
 
                     catch
                     {
-                        Console.Write(((Socket)socketList[i]).GetHashCode() + " déconnecté");
+                        Console.Write(((Socket)clientSocketList[i]).GetHashCode() + " déconnecté");
                     }
                 }
                 else
                 {
-                    socketList.Remove((Socket)socketList[i]);
+                    clientSocketList.Remove((Socket)clientSocketList[i]);
                     i--;
                 }
             }
         }
+
         private void infoToAll()
         {
-            for (int i = 0; i < socketList.Count; i++)
+            for (int i = 0; i < clientSocketList.Count; i++)
             {
-                if (((Socket)socketList[i]).Connected)
+                if (((Socket)clientSocketList[i]).Connected)
                 {
                     try
                     {
@@ -236,18 +239,18 @@ namespace Chat_Server
                         
                         // Ligne dessous commentée car ne compile pas.
                         //byte[] msg = System.Text.Encoding.UTF8.GetBytes(msgDisconnected);
-                        int bytesSent = ((Socket)socketList[i]).Send(msg, msg.Length, SocketFlags.None);
-                        Console.WriteLine("Writing to:" + socketList.Count.ToString());
+                        int bytesSent = ((Socket)clientSocketList[i]).Send(msg, msg.Length, SocketFlags.None);
+                        Console.WriteLine("Writing to:" + clientSocketList.Count.ToString());
                     }
 
                     catch
                     {
-                        Console.Write(((Socket)socketList[i]).GetHashCode() + " déconnecté");
+                        Console.Write(((Socket)clientSocketList[i]).GetHashCode() + " déconnecté");
                     }
                 }
                 else
                 {
-                    socketList.Remove((Socket)socketList[i]);
+                    clientSocketList.Remove((Socket)clientSocketList[i]);
                     i--;
                 }
             }
