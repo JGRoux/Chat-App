@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using System.Net;
 using System.Net.Sockets;
 using System.Collections;
 using System.Threading;
 using System.IO;
-
-
-//SAlut c'est dex
 
 namespace Chat_Server
 {
@@ -19,13 +15,14 @@ namespace Chat_Server
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(SharedLibrary.clientServerShared.jg); //ALLER LALAAAAAAAAAAAAAAA POPOPOPOPOPOPOPOPOPOPOP
-            while (true) ;
+            while (true);
         }
     }
 
     public class Server
     {
+        private Socket serverSocket;
+
         public ArrayList socketList = new ArrayList();
         //Liste de correspondance entre les pseudos et leurs sockets
         public Hashtable NickList = new Hashtable();
@@ -35,6 +32,15 @@ namespace Chat_Server
         string msgDeconnecte = null;
         byte[] msg;
         public StreamWriter logW = null;
+
+        // Keeps listening and accepts the connection of 1 client.
+        private Socket listenAndAcceptSocket()
+        {
+            this.serverSocket.Listen(1);
+            Socket newClientSocket = this.serverSocket.Accept();
+
+            return newClientSocket;
+        }
 
         public void Start()
         {
@@ -187,10 +193,8 @@ namespace Chat_Server
                                 paquetsReceived++;
 
                             }
-
                         }
                     }
-
                 }
                 Thread.Sleep(10);
             }
@@ -229,7 +233,9 @@ namespace Chat_Server
                     try
                     {
                         //byte[] msg=System.Text.Encoding.UTF8.GetBytes(message);
-                        byte[] msg = System.Text.Encoding.UTF8.GetBytes(msgDisconnected);
+                        
+                        // Ligne dessous commentée car ne compile pas.
+                        //byte[] msg = System.Text.Encoding.UTF8.GetBytes(msgDisconnected);
                         int bytesSent = ((Socket)socketList[i]).Send(msg, msg.Length, SocketFlags.None);
                         Console.WriteLine("Writing to:" + socketList.Count.ToString());
                     }
@@ -246,7 +252,5 @@ namespace Chat_Server
                 }
             }
         }
-
     }
-
 }
