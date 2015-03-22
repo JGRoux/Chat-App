@@ -8,18 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Chat_App
+namespace Chat_App.View
 {
-    public partial class Tabs : UserControl
+    public partial class ConnectionTab : UserControl
     {
-        public Tabs()
+        public ConnectionTab()
         {
             InitializeComponent();
         }
 
-        private void btnSend_Click(object sender, EventArgs e)
+        public ComboBox getComboBox()
         {
-
+            return this.comboBox1;
         }
     }
 }
