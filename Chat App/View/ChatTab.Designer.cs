@@ -136,10 +136,10 @@
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainer;
-        private System.Windows.Forms.TextBox txtBoxDiscussion;
+        public System.Windows.Forms.TextBox txtBoxDiscussion;
         private System.Windows.Forms.Panel panelBottom;
         private System.Windows.Forms.ListBox listBoxUsers;
-        private System.Windows.Forms.TextBox txtBoxMessage;
+        public System.Windows.Forms.TextBox txtBoxMessage;
         private System.Windows.Forms.Button btnSend;
 
     }

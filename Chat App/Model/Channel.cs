@@ -16,6 +16,7 @@ namespace Chat_Client.Model
 
         public Channel()
         {
+
         }
 
         public Channel(String name, String uri)
