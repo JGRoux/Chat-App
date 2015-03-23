@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace Chat_Server
 {
@@ -14,13 +15,16 @@ namespace Chat_Server
         string nickname;
         bool connected;
 
+        private ArrayList socketList;
+
         //Data recieved from the sockets
         byte[] msg;
         string msgString;
 
-        public ThreadClient(Socket clientSocket)
+        public ThreadClient(Socket clientSocket, ArrayList socketList)
         {
             this.clientSocket = clientSocket;
+            this.socketList = socketList;
             connected = true;
             Thread newThreadClient = new Thread(threadClientMethod);
             newThreadClient.Start();
@@ -37,8 +41,15 @@ namespace Chat_Server
                     clientSocket.Close();
                     connected = false;
                     return;
+                    Console.Write("DECONNEXION DE:" + nickname);
+                    Console.WriteLine("Writing to:" + socketList.Count.ToString());
+                    msgString = nickname.Trim() + "vient de se déconnecter!";
+                    Thread DisconnectMessage = new Thread(new ThreadStart(FwdMsg));
+                    DisconnectMessage.Start();
+                    DisconnectMessage.Join();
+            
                 }
-                //Availale contient la quantité de données recues du réseau et disponibles pour la lecture
+                //Available contient la quantité de données recues du réseau et disponibles pour la lecture
                 if (clientSocket.Available > 0)
                 {
                     int paquetsReceived = 0;
@@ -79,12 +90,43 @@ namespace Chat_Server
                          
                         }
 
+                        Thread forwardingThread = new Thread(new ThreadStart(FwdMsg));
+                        forwardingThread.Start();
+                        forwardingThread.Join();
                         paquetsReceived++;
                     }
+
                     Console.WriteLine(msgString);
                 }
                 Thread.Sleep(10);
             }
+        }
+
+        private void FwdMsg()
+        {
+            
+            for (int i = 0; i < socketList.Count; i++)
+            {
+                if (((Socket)socketList[i]).Connected)
+                {
+                    try
+                    {
+                        int bytesSent = ((Socket)socketList[i]).Send(msg, msg.Length, SocketFlags.None);
+                    }
+
+                    catch
+                    {
+                        Console.Write(((Socket)socketList[i]).GetHashCode() + " déconnecté");
+                    }
+                }
+                else
+                {
+                    socketList.Remove((Socket)socketList[i]);
+                    i--;
+                }
+            }
+        }
+
         }
     }
 }

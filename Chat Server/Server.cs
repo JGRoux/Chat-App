@@ -46,7 +46,7 @@ namespace Chat_Server
 
                 socketList.Add(newClientSocket);
 
-                new ThreadClient(newClientSocket);
+                new ThreadClient(newClientSocket, socketList);
                 //Thread threadNewClient = new Thread(new ThreadStart(threadClient));
 
             }
