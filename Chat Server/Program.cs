@@ -15,7 +15,9 @@ namespace Chat_Server
     {
         static void Main(string[] args)
         {
-            while (true);
+            Server startServer = new Server();
+
+            startServer.Start();
         }
     }
 
@@ -167,16 +169,12 @@ namespace Chat_Server
                                 {
                                     //Réupère la séquence qui correspond aux 6 premiers caractères du message de la socket
                                     string seq = msgString.Substring(0, 6);
-                                        sequence = Convert.ToInt64(seq);
-                                        //Récupération du pseudo: les 9 prochains caractères
-                                        Nick = msgString.Substring(6, 15);
-                                         msgString = Nick.Trim() + " a ecrit:" + msgString.Substring(20, (msgString.Length - 20)) + "\n";
-                                    
-                                     
-
+                                    sequence = Convert.ToInt64(seq);
+                                    //Récupération du pseudo: les 9 prochains caractères
+                                    Nick = msgString.Substring(6, 15);
+                                    msgString = Nick.Trim() + " a ecrit:" + msgString.Substring(20, (msgString.Length - 20)) + "\n";
                                 }
                                 
-
                                 msg = System.Text.Encoding.UTF8.GetBytes(msgString);
 
                                 if (sequence == 1)
@@ -185,7 +183,6 @@ namespace Chat_Server
                                     //getConnected();
                                     string message = Nick.Trim() + " vient de se connecter\\par";
                                     msg = System.Text.Encoding.UTF8.GetBytes(message);
-                                
                                 }
 
                                 Thread forwardingThread = new Thread(new ThreadStart(sendMsg));
@@ -199,7 +196,6 @@ namespace Chat_Server
                 }
                 Thread.Sleep(10);
             }
-
         }
 
         private void sendMsg()

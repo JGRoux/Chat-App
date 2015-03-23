@@ -11,10 +11,12 @@ namespace SharedLibrary
 {
     public static class clientServerShared
     {
+        /*
         // After creating the server or a client, binding is necessary. 
         public void bind(Socket socket, String serverHost, int serverPort)
         {
             socket.Bind(new IPEndPoint(IPAddress.Parse(serverHost), serverPort));
         }
+         * */
     }
 }
