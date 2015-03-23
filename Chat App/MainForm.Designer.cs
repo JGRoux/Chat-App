@@ -94,6 +94,7 @@
             this.sendMsg.TabIndex = 5;
             this.sendMsg.Text = "Envoyer";
             this.sendMsg.UseVisualStyleBackColor = false;
+            this.sendMsg.Click += new System.EventHandler(this.SendMessage);
             // 
             // Connexion
             // 
@@ -152,6 +153,7 @@
             this.Connect.TabIndex = 6;
             this.Connect.Text = "Se connecter";
             this.Connect.UseVisualStyleBackColor = false;
+            this.Connect.Click += new System.EventHandler(this.ConnectClick);
             // 
             // MainForm
             // 
