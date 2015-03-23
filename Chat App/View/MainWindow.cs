@@ -1,4 +1,4 @@
-﻿using Chat_App.View;
+﻿using Chat_Client.View;
 using Chat_Client.Model;
 using System;
 using System.Collections.Generic;
@@ -32,6 +32,7 @@ namespace Chat_Client
             this.setConnectionTab();
         }
 
+        // Add a tab when clicking on the last tab
         private void tabControl_Selecting(object sender, TabControlCancelEventArgs e)
         {
             if (e.TabPageIndex == this.tabControl.TabPages.Count - 1)
@@ -42,10 +43,11 @@ namespace Chat_Client
             }
         }
 
+        // Method to draw the tab and add a close button and an add button on the last tab
         private void tabControl_DrawItem(object sender, DrawItemEventArgs e)
         {
             RectangleF tabTextArea = RectangleF.Empty;
-
+            Console.WriteLine("qs");
             if (e.Index != this.tabControl.TabCount - 1)
             {
                 tabTextArea = (RectangleF)this.tabControl.GetTabRect(e.Index);
@@ -74,31 +76,60 @@ namespace Chat_Client
             e.DrawFocusRectangle();
         }
 
+        // Visual effect on close area of the tab when mouse is hover
+        private void tabControl_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (this.isOnCloseArea(e))
+            {
+                //this.Refresh();
+                //TODO
+            }
+        }   
+
+        // Remove a tab when clicking on close area
         private void tabControl_MouseDown(object sender, MouseEventArgs e)
         {
+            if(this.isOnCloseArea(e))
+                this.tabControl.TabPages.RemoveAt(this.tabControl.SelectedIndex);
+        }
 
+        private bool isOnCloseArea(MouseEventArgs e)
+        {
             RectangleF tabTextArea = (RectangleF)this.tabControl.GetTabRect(this.tabControl.SelectedIndex);
             tabTextArea = new RectangleF(tabTextArea.X + tabTextArea.Width - 16, 5, 13, 13);
             Point pt = new Point(e.X, e.Y);
             if (tabTextArea.Contains(pt))
-            {
-                this.tabControl.TabPages.RemoveAt(this.tabControl.SelectedIndex);
-            }
+                return true;
+            else
+                return false;
         }
 
+        // Method to set the connection user control into the selected tab
         private void setConnectionTab()
         {
-            ConnectionTab tab = new ConnectionTab();
+            ConnectionTab tab = new ConnectionTab(this.chatClient);
             tab.Dock = System.Windows.Forms.DockStyle.Fill;
 
             foreach (Channel channel in this.chatClient.channelsList)
                 tab.getComboBox().Items.Add(channel.Name);
 
             this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(tab);
+            tab.connect += createConnection;
         }
 
-        private void setMessage(){
-            
+        // Launch new channel connection when clicking on button Connect
+        private void createConnection(object sender, EventArgs e)
+        {
+            ConnectionTab tab = (ConnectionTab) sender;
+            Channel channel = this.chatClient.getChannel(tab.getComboBox().Text);
+            // Ci-dessous pour get le username et password
+            //tab.getTxtBoxUsername();
+            //tab.getTxtBoxPwd();
+            ChatTab chatTab = new ChatTab(channel);
+            chatTab.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl.TabPages[this.tabControl.SelectedIndex].Text = tab.getComboBox().Text+"     ";
+            this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Clear();
+            this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(chatTab);
         }
 
         // Establishes the connection with the server.
@@ -131,8 +162,6 @@ namespace Chat_Client
         {
             this.clientSocket.Close();
             this.clientSocket.Disconnect(true); 
-        }
-
-        
+        }     
     }
 }

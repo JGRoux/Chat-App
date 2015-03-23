@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Chat_Client.Model
 {
-    class ChatClient
+    public class ChatClient
     {
         public List<Channel> channelsList {get; set;}
 

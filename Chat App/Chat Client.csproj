@@ -70,6 +70,12 @@
     <Compile Include="View\ChatTab.Designer.cs">
       <DependentUpon>ChatTab.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\NewChannelDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\NewChannelDialog.Designer.cs">
+      <DependentUpon>NewChannelDialog.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="View\ConnectionTab.resx">
       <DependentUpon>ConnectionTab.cs</DependentUpon>
     </EmbeddedResource>
@@ -88,6 +94,9 @@
     </Compile>
     <EmbeddedResource Include="View\ChatTab.resx">
       <DependentUpon>ChatTab.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\NewChannelDialog.resx">
+      <DependentUpon>NewChannelDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
