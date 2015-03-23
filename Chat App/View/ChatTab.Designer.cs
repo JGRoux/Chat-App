@@ -1,6 +1,6 @@
-﻿namespace Chat_App
+﻿namespace Chat_Client
 {
-    partial class Tabs
+    partial class ChatTab
     {
         /// <summary> 
         /// Variable nécessaire au concepteur.
@@ -114,13 +114,13 @@
             this.btnSend.UseVisualStyleBackColor = true;
             this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
             // 
-            // Tabs
+            // ChatTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer);
             this.Controls.Add(this.panelBottom);
-            this.Name = "Tabs";
+            this.Name = "ChatTab";
             this.Size = new System.Drawing.Size(441, 373);
             this.splitContainer.Panel1.ResumeLayout(false);
             this.splitContainer.Panel1.PerformLayout();

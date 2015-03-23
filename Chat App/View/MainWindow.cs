@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Chat_App.View;
+using Chat_Client.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,10 +12,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Chat_App
+namespace Chat_Client
 {
     public partial class MainWindow : Form
     {
+        private ChatClient chatClient;
         private Socket clientSocket;
         private String serverHost;
         private int serverPort;
@@ -23,12 +26,19 @@ namespace Chat_App
             InitializeComponent();
         }
 
+        private void MainWindow_Load(object sender, EventArgs e)
+        {
+            this.chatClient = new ChatClient();
+            this.setConnectionTab();
+        }
+
         private void tabControl_Selecting(object sender, TabControlCancelEventArgs e)
         {
             if (e.TabPageIndex == this.tabControl.TabPages.Count - 1)
             {
                 this.tabControl.TabPages.Insert(this.tabControl.TabPages.Count - 1, "New Tab     ");
                 this.tabControl.SelectedIndex = e.TabPageIndex;
+                this.setConnectionTab();
             }
         }
 
@@ -39,7 +49,7 @@ namespace Chat_App
             if (e.Index != this.tabControl.TabCount - 1)
             {
                 tabTextArea = (RectangleF)this.tabControl.GetTabRect(e.Index);
-                using (Bitmap bmp = new Bitmap(Chat_App.Properties.Resources.icon_close))
+                using (Bitmap bmp = new Bitmap(Chat_Client.Properties.Resources.icon_close))
                 {
                     if (e.Index == this.tabControl.SelectedIndex)
                     {
@@ -53,7 +63,7 @@ namespace Chat_App
             else
             {
                 tabTextArea = (RectangleF)this.tabControl.GetTabRect(e.Index);
-                using (Bitmap bmp = new Bitmap(Chat_App.Properties.Resources.icon_add))
+                using (Bitmap bmp = new Bitmap(Chat_Client.Properties.Resources.icon_add))
                 {
                     e.Graphics.DrawImage(bmp, tabTextArea.X + tabTextArea.Width / 2 - 8, 5, 13, 13);
                 }
@@ -72,14 +82,23 @@ namespace Chat_App
             Point pt = new Point(e.X, e.Y);
             if (tabTextArea.Contains(pt))
             {
-                Console.WriteLine("sq");
                 this.tabControl.TabPages.RemoveAt(this.tabControl.SelectedIndex);
-                //Fire Event to Client
-                /*if (this.tabControl.OnClose != null)
-                {
-                    OnClose(this, new CloseEventArgs(SelectedIndex));
-                }*/
             }
+        }
+
+        private void setConnectionTab()
+        {
+            ConnectionTab tab = new ConnectionTab();
+            tab.Dock = System.Windows.Forms.DockStyle.Fill;
+
+            foreach (Channel channel in this.chatClient.channelsList)
+                tab.getComboBox().Items.Add(channel.Name);
+
+            this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(tab);
+        }
+
+        private void setMessage(){
+            
         }
 
         // Establishes the connection with the server.
@@ -113,5 +132,7 @@ namespace Chat_App
             this.clientSocket.Close();
             this.clientSocket.Disconnect(true); 
         }
+
+        
     }
 }

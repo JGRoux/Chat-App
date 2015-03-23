@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chat Client", "Chat App\Chat Client.csproj", "{E1B318BB-BEB8-4087-AA90-8CC962BE3D38}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chat Server", "Chat Server\Chat Server.csproj", "{61AF254B-9961-487A-8F86-CC31EFC8446D}"

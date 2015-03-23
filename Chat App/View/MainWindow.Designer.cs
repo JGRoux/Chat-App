@@ -1,4 +1,4 @@
-﻿namespace Chat_App
+﻿namespace Chat_Client
 {
     partial class MainWindow
     {
@@ -35,9 +35,7 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.tabs1 = new Chat_App.Tabs();
             this.toolStrip1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -71,13 +69,12 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
-            this.tabPage1.Controls.Add(this.tabs1);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(577, 279);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Welcome     ";
+            this.tabPage1.Text = "New Tab     ";
             // 
             // tabControl
             // 
@@ -107,14 +104,6 @@
             this.tabPage2.Text = " ";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // tabs1
-            // 
-            this.tabs1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabs1.Location = new System.Drawing.Point(3, 3);
-            this.tabs1.Name = "tabs1";
-            this.tabs1.Size = new System.Drawing.Size(571, 273);
-            this.tabs1.TabIndex = 0;
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -125,9 +114,9 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainWindow";
             this.Text = "Chat App Client";
+            this.Load += new System.EventHandler(this.MainWindow_Load);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
-            this.tabPage1.ResumeLayout(false);
             this.tabControl.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -142,8 +131,6 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabPage2;
-        private Tabs tabs1;
-
     }
 }
 
