@@ -147,10 +147,10 @@ namespace Chat_Client
                             }
                             try
                             {
-                                //On remplit le richtextbox avec les données reçues lorsqu'on a tout réceptionné
+                                //On remplit le textbox avec les données reçues lorsqu'on a tout réceptionné
                                
                                 this.Invoke(new DisplayMsg(DisplayMsgChatBody), messageReceived); 
-                                //this.BringToFront();
+                               
 
                             }
                             catch (Exception E)
