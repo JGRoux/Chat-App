@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Chat_Client.Model;
+using Chat_Library.Model;
 
 namespace Chat_Client.View
 {
@@ -49,10 +50,10 @@ namespace Chat_Client.View
             NewChannelDialog dialog = new NewChannelDialog();
             if (ChannelCheck(dialog))
             {
+                this.chatClient.addClient(dialog.getTxtBoxChannelName().Text, dialog.getTxtBoxChannelUri().Text);
+                this.chatClient.save();
                 int index = this.getComboBox().Items.Add(dialog.getTxtBoxChannelName().Text);
                 this.getComboBox().SelectedIndex = index;
-                this.chatClient.addChannel(dialog.getTxtBoxChannelName().Text, dialog.getTxtBoxChannelUri().Text);
-                this.chatClient.save();
             }
             dialog.Dispose();
         }
@@ -65,33 +66,33 @@ namespace Chat_Client.View
             {
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    Channel channel;
+                    Client client;
                     // Channel name or Uri cannot be emtpy and 2 channel can't have the same name nor Uri
                     if (dialog.getTxtBoxChannelName().Text.Equals(""))
                         MessageBox.Show("Please enter a channel name !");
-                    else if (this.chatClient.getChannel(dialog.getTxtBoxChannelName().Text) != null)
+                    else if (this.chatClient.getClient(dialog.getTxtBoxChannelName().Text) != null)
                         MessageBox.Show("Another channel has already this name !");
                     else if (dialog.getTxtBoxChannelUri().Text.Equals(""))
                         MessageBox.Show("Please enter an Uri !");
-                    else if ((channel = this.chatClient.getChannel(dialog.getTxtBoxChannelName().Text)) != null)
-                        MessageBox.Show("The channel " + channel.Name + " has already this Uri !");
+                    else if ((client = this.chatClient.getClient(dialog.getTxtBoxChannelName().Text)) != null)
+                        MessageBox.Show("The channel " + client.Channel.Name + " has already this Uri !");
                     else
                         return true;
                 }
                 else
                     return false;
-            } while (this.chatClient.getChannel(dialog.getTxtBoxChannelName().Text) != null || dialog.getTxtBoxChannelName().Text.Equals("") || dialog.getTxtBoxChannelUri().Text.Equals("") || this.chatClient.getChannel(dialog.getTxtBoxChannelName().Text) != null);
+            } while (this.chatClient.getClient(dialog.getTxtBoxChannelName().Text) != null || dialog.getTxtBoxChannelName().Text.Equals("") || dialog.getTxtBoxChannelUri().Text.Equals("") || this.chatClient.getClient(dialog.getTxtBoxChannelName().Text) != null);
             return false;
         }
 
         // Autoset username and password when user select channel in combobox
         private void comboBoxChannels_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Channel channel = this.chatClient.getChannel(this.comboBoxChannels.Text);
-            if (channel.Username != null && channel.HashedPwd != null)
+            Client client = this.chatClient.getClient(this.comboBoxChannels.Text);
+            if (client.Username != null && client.Password != null)
             {
-                this.txtBoxUsername.Text = channel.Username;
-                this.txtBoxPwd.Text = channel.HashedPwd;
+                this.txtBoxUsername.Text = client.Username;
+                this.txtBoxPwd.Text = client.Password;
             }
         }
     }

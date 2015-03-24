@@ -1,4 +1,5 @@
 ﻿using Chat_Client.Controller;
+using Chat_Library.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,32 +10,32 @@ namespace Chat_Client.Model
 {
     public class ChatClient
     {
-        public List<Channel> channelsList {get; set;}
+        public List<Client> clientsList {get; set;}
 
         public ChatClient()
         {
-            this.channelsList = XMLSaver.ReadXml();
+            this.clientsList = XMLSaver.ReadXml();
         }
 
          // Add channel to the client
-        public void addChannel(String name, String uri)
+        public void addClient(String name, String uri)
         {
-            this.channelsList.Add(new Channel(name, uri));
+            this.clientsList.Add(new Client(new Channel(name, uri)));
         }
 
-        // Delete channel from the client
-        public void delAlbum(String name)
+        // Delete client infos
+        public void delClient(String name)
         {
-            this.channelsList.Remove(this.getChannel(name));
+            this.clientsList.Remove(this.getClient(name));
         }
 
-        // Get channel from the client
-        public Channel getChannel(String name)
+        // Get client from channel name
+        public Client getClient(String name)
         {
-            foreach (Channel channel in this.channelsList)
+            foreach (Client client in this.clientsList)
             {
-                if (channel.Name.Equals(name))
-                    return channel;
+                if (client.Channel.Name.Equals(name))
+                    return client;
             }
             return null;
         }
@@ -42,7 +43,7 @@ namespace Chat_Client.Model
         // Save client channel list to xml file
         public void save()
         {
-            XMLSaver.WriteXml(this.channelsList);
+            XMLSaver.WriteXml(this.clientsList);
         }
     }
 }

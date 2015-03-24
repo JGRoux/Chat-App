@@ -7,8 +7,8 @@
     <ProjectGuid>{0DB7B1BB-5001-40AE-8DB0-B0075D52A908}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mouhahaha</RootNamespace>
-    <AssemblyName>Mouhahaha</AssemblyName>
+    <RootNamespace>Chat_Library</RootNamespace>
+    <AssemblyName>Chat Library</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -39,7 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Connection.cs" />
+    <Compile Include="Controller\Connection.cs" />
+    <Compile Include="Model\Message.cs" />
+    <Compile Include="Model\Channel.cs" />
+    <Compile Include="Model\Client.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

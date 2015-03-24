@@ -8,22 +8,25 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Chat_Client.Model;
+using Chat_Library.Model;
 
 namespace Chat_Client
 {
     public partial class ChatTab : UserControl
     {
-        private Channel channel;
+        private Client client;
 
-        public ChatTab(Channel channel)
+        public ChatTab(Client client)
         {
             InitializeComponent();
-            this.channel = channel;
+            this.client = client;
+            // TODO
+            // Create connection et tout
         }
 
         private void btnSend_Click(object sender, EventArgs e)
         {
-
+            
         }
     }
 }

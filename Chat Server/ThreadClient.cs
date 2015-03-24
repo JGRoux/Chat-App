@@ -6,26 +6,23 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections;
+using Chat_Library.Controller;
+using Chat_Library.Model;
 
 namespace Chat_Server
 {
     class ThreadClient
     {
         private Socket clientSocket;
-        string nickname;
-        bool connected;
-
-        private ArrayList socketList;
+        private Client client;
 
         //Data recieved from the sockets
         byte[] msg;
         string msgString;
 
-        public ThreadClient(Socket clientSocket, ArrayList socketList)
+        public ThreadClient(Client client)
         {
-            this.clientSocket = clientSocket;
-            this.socketList = socketList;
-            connected = true;
+            this.client = client;
             Thread newThreadClient = new Thread(threadClientMethod);
             newThreadClient.Start();
         }
@@ -34,6 +31,8 @@ namespace Chat_Server
         {
             while (true)
             {
+                this.client.Connection.sendMessage(new Message("hello"));
+                /*
                 //Test to see if socket is connected
                 //if it s in readmode, and there is no available data, the connexion s terminated
                 if (((Socket)clientSocket).Poll(10, SelectMode.SelectRead) && ((Socket)clientSocket).Available == 0)
@@ -41,7 +40,7 @@ namespace Chat_Server
                     clientSocket.Close();
                     connected = false;
                     return;
-                    Console.Write("DECONNEXION DE:" + nickname);
+                    Console.Write("DECONNEXION DE:" + client.name);
                     Console.WriteLine("Writing to:" + socketList.Count.ToString());
                     msgString = nickname.Trim() + "vient de se déconnecter!";
                     Thread DisconnectMessage = new Thread(new ThreadStart(FwdMsg));
@@ -99,10 +98,11 @@ namespace Chat_Server
                     Console.WriteLine(msgString);
                 }
                 Thread.Sleep(10);
+                 * */
             }
         }
 
-        private void FwdMsg()
+        /*private void FwdMsg()
         {
             
             for (int i = 0; i < socketList.Count; i++)
@@ -125,7 +125,7 @@ namespace Chat_Server
                     i--;
                 }
             }
-        }
+        }*/
 
         
     }

@@ -1,4 +1,5 @@
 ﻿using Chat_Client.Model;
+using Chat_Library.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,32 +17,32 @@ namespace Chat_Client.Controller
         private static String filename = "infos.xml";
 
         // Write IRC channels list to xml file
-        public static void WriteXml(List<Channel> channels)
+        public static void WriteXml(List<Client> clients)
         {
-            XmlSerializer xs = new XmlSerializer(typeof(List<Channel>));
+            XmlSerializer xs = new XmlSerializer(typeof(List<Client>));
             using (StreamWriter sw = new StreamWriter(filename))
             {
-                xs.Serialize(sw, channels);
+                xs.Serialize(sw, clients);
             }
         }
 
         // Read xml file and return channels list
-        public static List<Channel> ReadXml()
+        public static List<Client> ReadXml()
         {
-            List<Channel> channels = null;
-            XmlSerializer xs = new XmlSerializer(typeof(List<Channel>));
+            List<Client> clients = null;
+            XmlSerializer xs = new XmlSerializer(typeof(List<Client>));
             try
             {
                 using (StreamReader sr = new StreamReader(filename))
                 {
-                    channels = xs.Deserialize(sr) as List<Channel>;
+                    clients = xs.Deserialize(sr) as List<Client>;
                 }
             }
             catch
             {
-                channels = new List<Channel>();
+                clients = new List<Client>();
             }
-            return channels;
+            return clients;
         }
     }
 }
