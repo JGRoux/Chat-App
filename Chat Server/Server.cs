@@ -6,7 +6,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections;
 using Chat_Library.Model;
 
 namespace Chat_Server
@@ -14,7 +13,7 @@ namespace Chat_Server
     public class Server
     {
         private Socket serverSocket;
-        private ArrayList ChannelsList = new ArrayList();
+        private List<Channel> channelsList = new List<Channel>();
 
         public Server()
         {
@@ -22,11 +21,9 @@ namespace Chat_Server
             this.serverSocket = new Socket(AddressFamily.InterNetwork,
                              SocketType.Stream,
                              ProtocolType.Tcp);
-            IPHostEntry ipHostEntry = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress ipAddress = ipHostEntry.AddressList[2];
-            Console.WriteLine("Server listen on IP " + ipAddress.ToString() + " port 8000");
+            Console.WriteLine("Server listen on port 8000");
             //On lie la socket au point de communication
-            this.serverSocket.Bind(new IPEndPoint(ipAddress, 8000));
+            this.serverSocket.Bind(new IPEndPoint(Dns.GetHostAddresses("127.0.0.1")[0], 8000));
         }
 
         // Infinite loop to wait for client connection
@@ -35,7 +32,7 @@ namespace Chat_Server
             while (true)
             {
                 Socket newClientSocket = listenAndAcceptSocket();
-                new ThreadClient(new Client(newClientSocket));
+                new ThreadClient(new Client(newClientSocket), channelsList);
             }
         }
 
@@ -45,7 +42,7 @@ namespace Chat_Server
             this.serverSocket.Listen(1);
             Console.WriteLine("Waiting for a new connection...");
             Socket newClientSocket = this.serverSocket.Accept();
-            Console.WriteLine("New Client:" + newClientSocket.GetHashCode());
+            Console.WriteLine("New connection from " + newClientSocket.RemoteEndPoint.ToString());
             return newClientSocket;
         }
     }

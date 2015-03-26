@@ -24,13 +24,13 @@ namespace Chat_Client
             InitializeComponent();
             this.client = client;
 
-            Console.WriteLine("URI: " + this.client.Channel.Uri);
-            //clientSocket.Bind(new IPEndPoint(IPAddress.Parse(this.client.Channel.Uri), this.client.Channel.Port));
-            //clientSocket.Connect(this.client.Channel.Uri, this.client.Channel.Port);
-
-            this.client.Connection = new Connection(new TcpClient());
-
-            this.client.Connection.connect(this.client.Channel.Uri, this.client.Channel.Port);
+            this.client.Connection = new Connection(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+            this.client.Connection.connect(this.client.Channel.Uri, 8000);
+            Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
+            message.addArgument("channel", "channel");
+            message.addArgument("username", "toto");
+            message.addArgument("password", "pwd");
+            this.client.Connection.sendMessage(message);
         }
 
         private void btnSend_Click(object sender, EventArgs e)

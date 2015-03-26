@@ -22,15 +22,10 @@ namespace Chat_Library.Controller
             this.socket = socket;
         }
 
-        public Connection (TcpClient clientSocket)
-        {
-            this.clientSocket = clientSocket;
-        }
-
         // Connects a client to a server.
         public void connect(String serverHost, int serverPort)
         {
-            this.clientSocket.Connect(serverHost, serverPort);
+            this.socket.Connect(new IPEndPoint(Dns.GetHostAddresses(serverHost)[0], serverPort));
         }
 
         // After creating the server or a client, binding is necessary. 
@@ -45,19 +40,32 @@ namespace Chat_Library.Controller
             DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Message));
             MemoryStream stream = new MemoryStream();
             js.WriteObject(stream, message);
-            System.Diagnostics.Debug.WriteLine(new StreamReader(stream).ReadToEnd());
+            stream.Position = 0;
             this.socket.Send(Encoding.UTF8.GetBytes(new StreamReader(stream).ReadToEnd()));
         }
 
         // Gets a message from the server or a client.
         public Message getMessage()
         {
-            byte[] buffer=new Byte[this.socket.Available];
-            this.socket.Receive(buffer);
-            DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Message));
-            MemoryStream stream = new MemoryStream(buffer);
-            Message message = (Message)js.ReadObject(stream);
-            return message;
+            try
+            {
+                byte[] buffer = new Byte[this.socket.Available];
+                this.socket.Receive(buffer);
+                DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Message));
+                MemoryStream stream = new MemoryStream(buffer);
+                Message message = (Message)js.ReadObject(stream);
+                return message;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("erreur:"+e.ToString());
+            }
+            return null;
+        }
+
+        public bool isAvailable()
+        {
+            return this.socket.Connected;
         }
 
         // Disconnects a client.
