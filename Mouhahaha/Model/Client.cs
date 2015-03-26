@@ -15,6 +15,7 @@ namespace Chat_Library.Model
         public String Username { get; set; }
         public String Password { get; set; }
         public Channel Channel { get; set; }
+        [XmlIgnore]
         public Boolean isConnected { get; set; }
         [XmlIgnore]
         public Connection Connection { get; set; }
@@ -30,8 +31,8 @@ namespace Chat_Library.Model
 
         public void setCredentials(String username, String pwd)
         {
-            this.Username = Username;
-            this.Password = this.encrypt(pwd);
+            this.Username = username;
+            this.Password = pwd;
         }
 
         private String encrypt(String pwd)

@@ -38,6 +38,7 @@ namespace Chat_Server
             }
         }
 
+        // Authentification du client
         private void authClient(Message message)
         {
             foreach (Channel channel in this.channelsList)
@@ -51,13 +52,14 @@ namespace Chat_Server
             if (this.client == null)
             {
                 // Si la channel n'existe pas on la crée et on ajoute l'utilisateur sur la channel
+                Console.WriteLine("Create new channel:" + message.getArg("channel"));
                 Channel channel = new Channel(null, message.getArg("channel"));
                 this.channelsList.Add(channel);
                 this.addClientToChannel(message, channel);
             }
-
         }
 
+        // Vérification des logins fournies par le client
         private void checkCredentials(Message message, Channel channel)
         {
             Client client;
@@ -66,9 +68,14 @@ namespace Chat_Server
                 // Client already exist on channel so we check the password
                 if (client.Password.Equals(message.getArg("password")))
                 {
-                    client.isConnected = true;
-                    client.Connection = this.client.Connection;
                     this.client = client;
+                    this.client.isConnected = true;
+                    this.client.Connection = this.connection;
+                    this.client.Connection.sendMessage(new Message("Connected"));
+                }
+                else
+                {
+                    this.client.Connection.sendMessage(new Message("Refused"));
                 }
             }
             else
@@ -80,11 +87,13 @@ namespace Chat_Server
 
         private void addClientToChannel(Message message, Channel channel)
         {
+            Console.WriteLine("Add new client " + message.getArg("username") + " to channel " + message.getArg("channel"));
             this.client = new Client(channel);
             this.client.setCredentials(message.getArg("username"), message.getArg("password"));
             this.client.isConnected = true;
             this.client.Connection = this.connection;
             channel.addClient(this.client);
+            this.client.Connection.sendMessage(new Message("Connected"));
         }
 
         /*private void FwdMsg()
