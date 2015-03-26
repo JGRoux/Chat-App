@@ -23,11 +23,6 @@ namespace Chat_Library.Model
         {
         }
 
-        public Client(Socket socket)
-        {
-            this.Connection = new Connection(socket);
-        }
-
         public Client(Channel channel)
         {
             this.Channel = channel;

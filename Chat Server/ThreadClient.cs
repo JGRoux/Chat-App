@@ -14,11 +14,12 @@ namespace Chat_Server
     class ThreadClient
     {
         private Client client;
+        private Connection connection;
         private List<Channel> channelsList;
 
-        public ThreadClient(Client client, List<Channel> channelsList)
+        public ThreadClient(Connection connection, List<Channel> channelsList)
         {
-            this.client = client;
+            this.connection = connection;
             this.channelsList = channelsList;
             Thread newThreadClient = new Thread(threadClientMethod);
             newThreadClient.Start();
@@ -27,9 +28,9 @@ namespace Chat_Server
         private void threadClientMethod()
         {
             Message message;
-            while (this.client.Connection.isAvailable())
+            while (this.connection.isAvailable())
             {
-                if ((message = this.client.Connection.getMessage()) != null)
+                if ((message = this.connection.getMessage()) != null)
                 {
                     if (message.cmd.Equals("Auth"))
                         this.authClient(message);
@@ -40,11 +41,20 @@ namespace Chat_Server
         private void authClient(Message message)
         {
             foreach (Channel channel in this.channelsList)
-                if (channel.Uri.Split('/')[1].Equals(message.getArg("channel")))
+                if (channel.Uri.Equals(message.getArg("channel")))
                 {
+                    // Si la channel existe on test le login
                     this.checkCredentials(message, channel);
+                    return;
                 }
-                else { }
+
+            if (this.client == null)
+            {
+                // Si la channel n'existe pas on la crée et on ajoute l'utilisateur sur la channel
+                Channel channel = new Channel(null, message.getArg("channel"));
+                this.channelsList.Add(channel);
+                this.addClientToChannel(message, channel);
+            }
 
         }
 
@@ -53,6 +63,7 @@ namespace Chat_Server
             Client client;
             if ((client = channel.getClient(message.getArg("username"))) != null)
             {
+                // Client already exist on channel so we check the password
                 if (client.Password.Equals(message.getArg("password")))
                 {
                     client.isConnected = true;
@@ -62,7 +73,18 @@ namespace Chat_Server
             }
             else
             {
+                // Client does not exits on channel so we add the client to the channel
+                this.addClientToChannel(message, channel);
             }
+        }
+
+        private void addClientToChannel(Message message, Channel channel)
+        {
+            this.client = new Client(channel);
+            this.client.setCredentials(message.getArg("username"), message.getArg("password"));
+            this.client.isConnected = true;
+            this.client.Connection = this.connection;
+            channel.addClient(this.client);
         }
 
         /*private void FwdMsg()

@@ -27,9 +27,9 @@ namespace Chat_Client
             this.client.Connection = new Connection(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
             this.client.Connection.connect(this.client.Channel.Uri, 8000);
             Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
-            message.addArgument("channel", "channel");
-            message.addArgument("username", "toto");
-            message.addArgument("password", "pwd");
+            message.addArgument("channel", this.client.Channel.Uri.Split('/')[1]);
+            message.addArgument("username", this.client.Username);
+            message.addArgument("password", this.client.Password);
             this.client.Connection.sendMessage(message);
         }
 

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Chat_Library.Model;
+using Chat_Library.Controller;
 
 namespace Chat_Server
 {
@@ -32,7 +33,7 @@ namespace Chat_Server
             while (true)
             {
                 Socket newClientSocket = listenAndAcceptSocket();
-                new ThreadClient(new Client(newClientSocket), channelsList);
+                new ThreadClient(new Connection(newClientSocket), channelsList);
             }
         }
 

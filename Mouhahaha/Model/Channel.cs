@@ -35,5 +35,10 @@ namespace Chat_Library.Model
             }
             return null;
         }
+
+        public void addClient(Client client)
+        {
+            this.clientList.Add(client);
+        }
     }
 }
