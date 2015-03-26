@@ -35,6 +35,7 @@ namespace Chat_Server
 
                 Message mess = this.client.Connection.getMessage();
                 Console.WriteLine(mess.text);
+
                 /*
                 //Test to see if socket is connected
                 //if it s in readmode, and there is no available data, the connexion s terminated
