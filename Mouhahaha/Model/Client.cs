@@ -15,6 +15,7 @@ namespace Chat_Library.Model
         public String Username { get; set; }
         public String Password { get; set; }
         public Channel Channel { get; set; }
+        public Boolean isConnected { get; set; }
         [XmlIgnore]
         public Connection Connection { get; set; }
 

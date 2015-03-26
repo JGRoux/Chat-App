@@ -38,13 +38,13 @@ namespace Chat_Client.View
             return this.txtBoxPwd;
         }
 
-        // Set action when user click on the Connect button
+        // Set action when user click on the Connect button.
         private void btnConnect_Click(object sender, EventArgs e)
         {
             this.connect(this, e);
         }
 
-        // Display a new form to add a channel when clicking on the add button
+        // Display a new form to add a channel when clicking on the add button.
         private void btnAddChannel_Click(object sender, EventArgs e)
         {
             NewChannelDialog dialog = new NewChannelDialog();

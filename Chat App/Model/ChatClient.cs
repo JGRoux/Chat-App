@@ -17,19 +17,19 @@ namespace Chat_Client.Model
             this.clientsList = XMLSaver.ReadXml();
         }
 
-         // Add channel to the client
+         // Add channel to the client.
         public void addClient(String name, String uri)
         {
             this.clientsList.Add(new Client(new Channel(name, uri)));
         }
 
-        // Delete client infos
+        // Delete client infos.
         public void delClient(String name)
         {
             this.clientsList.Remove(this.getClient(name));
         }
 
-        // Get client from channel name
+        // Get client from channel name.
         public Client getClient(String name)
         {
             foreach (Client client in this.clientsList)
@@ -40,7 +40,7 @@ namespace Chat_Client.Model
             return null;
         }
 
-        // Save client channel list to xml file
+        // Save client channel list to xml file.
         public void save()
         {
             XMLSaver.WriteXml(this.clientsList);

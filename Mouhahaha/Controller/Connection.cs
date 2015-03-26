@@ -21,6 +21,12 @@ namespace Chat_Library.Controller
             this.socket = socket;
         }
 
+        // Connects a client to a server.
+        public void connect(String serverHost, int serverPort)
+        {
+            this.socket.Connect(serverHost, serverPort);
+        }
+
         // After creating the server or a client, binding is necessary. 
         public void bind(String serverHost, int serverPort)
         {

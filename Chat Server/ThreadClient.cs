@@ -16,7 +16,7 @@ namespace Chat_Server
         private Socket clientSocket;
         private Client client;
 
-        //Data recieved from the sockets
+        // Data received from the sockets.
         byte[] msg;
         string msgString;
 

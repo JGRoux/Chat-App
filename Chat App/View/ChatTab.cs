@@ -20,8 +20,9 @@ namespace Chat_Client
         {
             InitializeComponent();
             this.client = client;
-            // TODO
-            // Create connection et tout
+
+            this.client.Connection.bind(this.client.Channel.Uri, this.client.Channel.Port);
+            this.client.Connection.connect(this.client.Channel.Uri, this.client.Channel.Port);
         }
 
         private void btnSend_Click(object sender, EventArgs e)
