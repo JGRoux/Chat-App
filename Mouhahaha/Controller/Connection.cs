@@ -8,29 +8,24 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization.Json;
 using Chat_Library.Model;
+using System.Threading;
 
 // The shared library that we use if a function is used by the server and also by the client. 
 namespace Chat_Library.Controller
 {
     public class Connection
     {
-        public Socket socket {get; set;}
-        public TcpClient clientSocket {get; set;}
+        public Socket socket { get; set; }
 
         public Connection(Socket socket)
         {
             this.socket = socket;
         }
 
-        public Connection (TcpClient clientSocket)
-        {
-            this.clientSocket = clientSocket;
-        }
-
         // Connects a client to a server.
         public void connect(String serverHost, int serverPort)
         {
-            this.clientSocket.Connect(serverHost, serverPort);
+            this.socket.Connect(new IPEndPoint(Dns.GetHostAddresses(serverHost)[0], serverPort));
         }
 
         // After creating the server or a client, binding is necessary. 
@@ -45,19 +40,39 @@ namespace Chat_Library.Controller
             DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Message));
             MemoryStream stream = new MemoryStream();
             js.WriteObject(stream, message);
-            System.Diagnostics.Debug.WriteLine(new StreamReader(stream).ReadToEnd());
+            stream.Position = 0;
             this.socket.Send(Encoding.UTF8.GetBytes(new StreamReader(stream).ReadToEnd()));
         }
 
         // Gets a message from the server or a client.
         public Message getMessage()
         {
-            byte[] buffer=new Byte[this.socket.Available];
-            this.socket.Receive(buffer);
-            DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Message));
-            MemoryStream stream = new MemoryStream(buffer);
-            Message message = (Message)js.ReadObject(stream);
-            return message;
+            Message message = null;
+            while(message == null){
+                try
+                {
+                    if (this.socket.Available > 0)
+                    {
+                        byte[] buffer = new Byte[this.socket.Available];
+                        this.socket.Receive(buffer);
+                        DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Message));
+                        MemoryStream stream = new MemoryStream(buffer);
+                        message = (Message)js.ReadObject(stream);
+                        return message;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("erreur:"+e.ToString());
+                }
+                Thread.Sleep(1);
+            }
+            return null;
+        }
+
+        public bool isAvailable()
+        {
+            return this.socket.Connected;
         }
 
         // Disconnects a client.

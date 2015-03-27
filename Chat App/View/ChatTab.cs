@@ -23,14 +23,6 @@ namespace Chat_Client
         {
             InitializeComponent();
             this.client = client;
-
-            Console.WriteLine("URI: " + this.client.Channel.Uri);
-            //clientSocket.Bind(new IPEndPoint(IPAddress.Parse(this.client.Channel.Uri), this.client.Channel.Port));
-            //clientSocket.Connect(this.client.Channel.Uri, this.client.Channel.Port);
-
-            this.client.Connection = new Connection(new TcpClient());
-
-            this.client.Connection.connect(this.client.Channel.Uri, this.client.Channel.Port);
         }
 
         private void btnSend_Click(object sender, EventArgs e)

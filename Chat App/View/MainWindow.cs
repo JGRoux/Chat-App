@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Chat_Library.Model;
+using Chat_Library.Controller;
 
 namespace Chat_Client
 {
@@ -81,12 +82,12 @@ namespace Chat_Client
                 //this.Refresh();
                 //TODO
             }
-        }   
+        }
 
         // Remove a tab when clicking on close area.
         private void tabControl_MouseDown(object sender, MouseEventArgs e)
         {
-            if(this.isOnCloseArea(e))
+            if (this.isOnCloseArea(e))
                 this.tabControl.TabPages.RemoveAt(this.tabControl.SelectedIndex);
         }
 
@@ -117,12 +118,19 @@ namespace Chat_Client
         // Launch new channel connection when clicking on button Connect.
         private void createConnection(object sender, EventArgs e)
         {
-            ConnectionTab tab = (ConnectionTab) sender;
+            ConnectionTab tab = (ConnectionTab)sender;
             Client client = this.chatClient.getClient(tab.getComboBox().Text);
-            // Ci-dessous pour get le username et password
-            if ((tab.getTxtBoxUsername() != null) && (tab.getTxtBoxPwd() != null))
+            client.setCredentials(tab.getTxtBoxUsername().Text, tab.getTxtBoxPwd().Text);
+            client.Connection = new Connection(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+            String[] Uri = client.Channel.Uri.Split('/');
+            client.Connection.connect(Uri[0], 8000);
+            Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
+            message.addArgument("channel", Uri[1]);
+            message.addArgument("username", client.Username);
+            message.addArgument("password", client.Password);
+            client.Connection.sendMessage(message);
+            if (client.Connection.getMessage().cmd.Equals("Connected"))
             {
-                client.setCredentials(tab.getTxtBoxUsername().Text, tab.getTxtBoxPwd().Text);
                 ChatTab chatTab = new ChatTab(client);
                 chatTab.Dock = System.Windows.Forms.DockStyle.Fill;
                 this.tabControl.TabPages[this.tabControl.SelectedIndex].Text = tab.getComboBox().Text + "     ";

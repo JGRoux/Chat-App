@@ -13,98 +13,89 @@ namespace Chat_Server
 {
     class ThreadClient
     {
-        private Socket clientSocket;
         private Client client;
+        private Connection connection;
+        private List<Channel> channelsList;
 
-        // Data received from the sockets.
-        byte[] msg;
-        string msgString;
-
-        public ThreadClient(Client client)
+        public ThreadClient(Connection connection, List<Channel> channelsList)
         {
-            this.client = client;
+            this.connection = connection;
+            this.channelsList = channelsList;
             Thread newThreadClient = new Thread(threadClientMethod);
             newThreadClient.Start();
         }
 
         private void threadClientMethod()
         {
-            while (true)
+            Message message;
+            //this.connection.sendMessage(new Message("test"));
+            while (this.connection.isAvailable())
             {
-                this.client.Connection.sendMessage(new Message("hello"));
-
-                Message mess = this.client.Connection.getMessage();
-                Console.WriteLine(mess.text);
-
-
-                /*
-                //Test to see if socket is connected
-                //if it s in readmode, and there is no available data, the connexion s terminated
-                if (((Socket)clientSocket).Poll(10, SelectMode.SelectRead) && ((Socket)clientSocket).Available == 0)
+                if ((message = this.connection.getMessage()) != null)
                 {
-                    clientSocket.Close();
-                    connected = false;
-                    return;
-                    Console.Write("DECONNEXION DE:" + client.name);
-                    Console.WriteLine("Writing to:" + socketList.Count.ToString());
-                    msgString = nickname.Trim() + "vient de se déconnecter!";
-                    Thread DisconnectMessage = new Thread(new ThreadStart(FwdMsg));
-                    DisconnectMessage.Start();
-                    DisconnectMessage.Join();
-            
+                    if (message.cmd.Equals("Auth"))
+                        this.authClient(message);
                 }
-                //Available contient la quantité de données recues du réseau et disponibles pour la lecture
-                if (clientSocket.Available > 0)
-                {
-                    int paquetsReceived = 0;
-                    long sequence = 0;
-                    string Nick = null;
-                    string msgBuffer = "";
-                    while (clientSocket.Available > 0)
-                    {
-                        msg = new byte[clientSocket.Available];
-
-                        //Reçoit le message et le stocke dans msg
-                        clientSocket.Receive(msg, msg.Length, SocketFlags.None);
-
-                        //Convertie les données reçues en String
-                        msgBuffer = System.Text.Encoding.UTF8.GetString(msg);
-
-
-                        //If this is the start of the message received
-                        if (paquetsReceived == 0)
-                        {
-                            //Réupère la séquence qui correspond aux 6 premiers caractères du message de la socket
-                            string seq = msgBuffer.Substring(0, 6);
-                            sequence = Convert.ToInt64(seq);
-                            //Récupération du pseudo: les 9 prochains caractères
-                            Nick = msgBuffer.Substring(6, 15);
-                            msgString = Nick.Trim() + " wrote:" + msgBuffer.Substring(20, (msgBuffer.Length - 20)) + "\n";
-                        }
-                        else
-                        {
-                            msgString += msgBuffer;
-                        }
-
-                        if (sequence == 1)
-                        {
-                            nickname = Nick;
-                            msgString = Nick.Trim() + " vient de se connecter";
-                            msg = System.Text.Encoding.UTF8.GetBytes(msgString);
-                         
-                        }
-
-                        Thread forwardingThread = new Thread(new ThreadStart(FwdMsg));
-                        forwardingThread.Start();
-                        forwardingThread.Join();
-                        paquetsReceived++;
-                    }
-
-                    Console.WriteLine(msgString);
-                }
-                Thread.Sleep(10);
-                 * */
+                
             }
+        }
+
+        // Authentification du client
+        private void authClient(Message message)
+        {
+            foreach (Channel channel in this.channelsList)
+                if (channel.Uri.Equals(message.getArg("channel")))
+                {
+                    // Si la channel existe on test le login
+                    this.checkCredentials(message, channel);
+                    return;
+                }
+
+            if (this.client == null)
+            {
+                // Si la channel n'existe pas on la crée et on ajoute l'utilisateur sur la channel
+                Console.WriteLine("Create new channel:" + message.getArg("channel"));
+                Channel channel = new Channel(null, message.getArg("channel"));
+                this.channelsList.Add(channel);
+                this.addClientToChannel(message, channel);
+            }
+        }
+
+        // Vérification des logins fournies par le client
+        private void checkCredentials(Message message, Channel channel)
+        {
+            Client client;
+            if ((client = channel.getClient(message.getArg("username"))) != null)
+            {
+                // Client already exist on channel so we check the password
+                if (client.Password.Equals(message.getArg("password")))
+                {
+                    this.client = client;
+                    this.client.isConnected = true;
+                    this.client.Connection = this.connection;
+                    this.client.Connection.sendMessage(new Message("Connected"));
+                }
+                else
+                {
+                    this.client.Connection.sendMessage(new Message("Refused"));
+                }
+            }
+            else
+            {
+                // Client does not exits on channel so we add the client to the channel
+                this.addClientToChannel(message, channel);
+            }
+        }
+
+        private void addClientToChannel(Message message, Channel channel)
+        {
+            Console.WriteLine("Add new client " + message.getArg("username") + " to channel " + message.getArg("channel"));
+            this.client = new Client(channel);
+            this.client.setCredentials(message.getArg("username"), message.getArg("password"));
+            this.client.isConnected = true;
+            this.client.Connection = this.connection;
+            channel.addClient(this.client);
+            this.client.Connection.sendMessage(new Message("Connected"));
         }
 
         /*private void FwdMsg()
@@ -132,6 +123,6 @@ namespace Chat_Server
             }
         }*/
 
-        
+
     }
 }

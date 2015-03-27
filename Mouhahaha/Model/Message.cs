@@ -10,16 +10,52 @@ namespace Chat_Library.Model
     [DataContract]
     public class Message
     {
-        [DataMember(Name = "text")]
-        public String text { get; set; }
+        [DataMember(Name = "cmd")]
+        public String cmd { get; set; }
+        [DataMember(Name = "args")]
+        public List<Argument> args { get; set; }
 
         public Message()
         {
         }
 
-        public Message(String text)
+        public Message(String cmd)
         {
-            this.text = text;
+            this.cmd = cmd;
+        }
+
+        public void addArgument(String name, String content)
+        {
+            if (this.args == null)
+                this.args = new List<Argument>();
+            this.args.Add(new Argument(name, content));
+        }
+
+        public String getArg(String name)
+        {
+            foreach (Argument arg in this.args)
+            {
+                if (arg.name.Equals(name))
+                    return arg.content;
+            }
+            return null;
+        }
+
+        public class Argument
+        {
+            public String name { get; set; }
+            public String content { get; set; }
+
+            public Argument()
+            {
+
+            }
+
+            public Argument(String name, String content)
+            {
+                this.name = name;
+                this.content = content;
+            }
         }
     }
 }

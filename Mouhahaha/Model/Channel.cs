@@ -12,7 +12,6 @@ namespace Chat_Library.Model
     public class Channel
     {
         public String Uri { get; set; }
-        public int Port { get; set; }
         public String Name { get; set; }
         [XmlIgnore]
         private List<Client> clientList = new List<Client>();
@@ -25,7 +24,6 @@ namespace Chat_Library.Model
         {
             this.Uri = uri;
             this.Name = name;
-            this.Port = 8000;
         }
 
         public Client getClient(String name)
@@ -36,6 +34,11 @@ namespace Chat_Library.Model
                     return client;
             }
             return null;
+        }
+
+        public void addClient(Client client)
+        {
+            this.clientList.Add(client);
         }
     }
 }
