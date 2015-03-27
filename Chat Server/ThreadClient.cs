@@ -35,6 +35,8 @@ namespace Chat_Server
                 {
                     if (message.cmd.Equals("Auth"))
                         this.authClient(message);
+                    else if (message.cmd.Equals("ReqClients"))
+                        this.reqClients();
                 }
                 
             }
@@ -96,6 +98,14 @@ namespace Chat_Server
             this.client.Connection = this.connection;
             channel.addClient(this.client);
             this.client.Connection.sendMessage(new Message("Connected"));
+        }
+
+        private void reqClients()
+        {
+            Message message = new Message("ClientsList");
+            foreach (Client client in this.client.Channel.getClientsList())
+                message.addArgument("name", client.Username);
+            this.client.Connection.sendMessage(message);
         }
 
         /*private void FwdMsg()

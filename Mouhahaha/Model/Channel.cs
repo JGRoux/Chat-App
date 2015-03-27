@@ -40,5 +40,10 @@ namespace Chat_Library.Model
         {
             this.clientList.Add(client);
         }
+
+        public List<Client> getClientsList()
+        {
+            return this.clientList;
+        }
     }
 }

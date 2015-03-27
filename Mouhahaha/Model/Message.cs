@@ -41,6 +41,17 @@ namespace Chat_Library.Model
             return null;
         }
 
+        public List<String> getArgContents(String name)
+        {
+            List<String> contentsList = new List<String>();
+            foreach (Argument arg in this.args)
+            {
+                if (arg.name.Equals(name))
+                    contentsList.Add(arg.content);
+            }
+            return contentsList;
+        }
+
         public class Argument
         {
             public String name { get; set; }

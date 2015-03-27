@@ -23,6 +23,16 @@ namespace Chat_Client
         {
             InitializeComponent();
             this.client = client;
+            Chat_Library.Model.Message message = new Chat_Library.Model.Message("ReqClients");
+            client.Connection.sendMessage(message);
+            if ((message = client.Connection.getMessage()).cmd.Equals("ClientsList"))
+            {
+                foreach (String name in message.getArgContents("name"))
+                {
+                    this.listBoxUsers.Items.Add(name);
+                }
+            }
+
         }
 
         private void btnSend_Click(object sender, EventArgs e)
