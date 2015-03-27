@@ -28,6 +28,7 @@ namespace Chat_Server
         private void threadClientMethod()
         {
             Message message;
+            //this.connection.sendMessage(new Message("test"));
             while (this.connection.isAvailable())
             {
                 if ((message = this.connection.getMessage()) != null)
@@ -35,6 +36,7 @@ namespace Chat_Server
                     if (message.cmd.Equals("Auth"))
                         this.authClient(message);
                 }
+                
             }
         }
 
