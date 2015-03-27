@@ -119,23 +119,45 @@ namespace Chat_Client
         private void createConnection(object sender, EventArgs e)
         {
             ConnectionTab tab = (ConnectionTab)sender;
-            Client client = this.chatClient.getClient(tab.getComboBox().Text);
-            client.setCredentials(tab.getTxtBoxUsername().Text, tab.getTxtBoxPwd().Text);
-            client.Connection = new Connection(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-            String[] Uri = client.Channel.Uri.Split('/');
-            client.Connection.connect(Uri[0], 8000);
-            Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
-            message.addArgument("channel", Uri[1]);
-            message.addArgument("username", client.Username);
-            message.addArgument("password", client.Password);
-            client.Connection.sendMessage(message);
-            if (client.Connection.getMessage().cmd.Equals("Connected"))
+            if(tab.getComboBox().Text.Equals(""))
+                MessageBox.Show("Please select a channel !");
+            else if(tab.getTxtBoxUsername().Text.Equals(""))
+                MessageBox.Show("Please enter a username !");
+            else if(tab.getTxtBoxPwd().Text.Equals(""))
+                MessageBox.Show("Please enter a password !");
+            if (!tab.getComboBox().Text.Equals("") && !tab.getTxtBoxPwd().Text.Equals("") && !tab.getTxtBoxUsername().Text.Equals(""))
             {
-                ChatTab chatTab = new ChatTab(client);
-                chatTab.Dock = System.Windows.Forms.DockStyle.Fill;
-                this.tabControl.TabPages[this.tabControl.SelectedIndex].Text = tab.getComboBox().Text + "     ";
-                this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Clear();
-                this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(chatTab);
+                try
+                {
+                    Client client = this.chatClient.getClient(tab.getComboBox().Text);
+                    client.setCredentials(tab.getTxtBoxUsername().Text, tab.getTxtBoxPwd().Text);
+                    client.Connection = new Connection(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+                    String[] Uri = client.Channel.Uri.Split('/');
+                    client.Connection.connect(Uri[0], 8000);
+                    Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
+                    message.addArgument("channel", Uri[1]);
+                    message.addArgument("username", client.Username);
+                    message.addArgument("password", client.Password);
+                    client.Connection.sendMessage(message);
+                    if (client.Connection.getMessage().cmd.Equals("Connected"))
+                    {
+                        this.chatClient.save(); // Save username and password
+                        ChatTab chatTab = new ChatTab(client);
+                        chatTab.Dock = System.Windows.Forms.DockStyle.Fill;
+                        this.tabControl.TabPages[this.tabControl.SelectedIndex].Text = tab.getComboBox().Text + "     ";
+                        this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Clear();
+                        this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(chatTab);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Wrong password !");
+                    }
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show("Connection refused by server !");
+                    Console.WriteLine(exception.ToString());
+                }
             }
         }
     }
