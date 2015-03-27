@@ -44,11 +44,12 @@ namespace Chat_Library.Model
         public List<String> getArgContents(String name)
         {
             List<String> contentsList = new List<String>();
-            foreach (Argument arg in this.args)
-            {
-                if (arg.name.Equals(name))
-                    contentsList.Add(arg.content);
-            }
+            if (this.args != null)
+                foreach (Argument arg in this.args)
+                {
+                    if (arg.name.Equals(name))
+                        contentsList.Add(arg.content);
+                }
             return contentsList;
         }
 

@@ -28,12 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.txtBoxDiscussion = new System.Windows.Forms.TextBox();
             this.listBoxUsers = new System.Windows.Forms.ListBox();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.txtBoxMessage = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
+            this.getConnectedClientTimer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -105,6 +107,7 @@
             // btnSend
             // 
             this.btnSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSend.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSend.Location = new System.Drawing.Point(366, 6);
             this.btnSend.Margin = new System.Windows.Forms.Padding(0);
             this.btnSend.Name = "btnSend";
@@ -113,6 +116,12 @@
             this.btnSend.Text = "Send";
             this.btnSend.UseVisualStyleBackColor = true;
             this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
+            // 
+            // getConnectedClientTimer
+            // 
+            this.getConnectedClientTimer.Enabled = true;
+            this.getConnectedClientTimer.Interval = 1000;
+            this.getConnectedClientTimer.Tick += new System.EventHandler(this.getConnectedClientTimer_Tick);
             // 
             // ChatTab
             // 
@@ -141,6 +150,7 @@
         private System.Windows.Forms.ListBox listBoxUsers;
         public System.Windows.Forms.TextBox txtBoxMessage;
         private System.Windows.Forms.Button btnSend;
+        private System.Windows.Forms.Timer getConnectedClientTimer;
 
     }
 }
