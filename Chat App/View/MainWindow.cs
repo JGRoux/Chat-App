@@ -155,7 +155,7 @@ namespace Chat_Client
                 }
                 catch (Exception exception)
                 {
-                    MessageBox.Show("Connection refused by server !");
+                    MessageBox.Show("Impossible to establish connection to server !");
                     Console.WriteLine(exception.ToString());
                 }
             }

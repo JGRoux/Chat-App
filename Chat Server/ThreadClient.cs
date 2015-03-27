@@ -104,7 +104,8 @@ namespace Chat_Server
         {
             Message message = new Message("ClientsList");
             foreach (Client client in this.client.Channel.getClientsList())
-                message.addArgument("name", client.Username);
+                if(client.isConnected && client!=this.client)
+                    message.addArgument("name", client.Username);
             this.client.Connection.sendMessage(message);
         }
 
