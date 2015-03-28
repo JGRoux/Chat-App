@@ -11,6 +11,7 @@ using Chat_Client.Model;
 using Chat_Library.Model;
 using System.Net.Sockets;
 using Chat_Library.Controller;
+using Chat_Library.Model;
 using System.Net;
 using System.Threading;
 
@@ -28,14 +29,14 @@ namespace Chat_Client
             this.client = client;
 
             this.listboxContextMenu = new ContextMenuStrip();
-            this.listboxContextMenu.Opening += new CancelEventHandler(lstBxAlbumsContextMenu_Opening);
-            this.listboxContextMenu.ItemClicked += new ToolStripItemClickedEventHandler(lstBxAlbumsContextMenu_ItemClicked);
+            this.listboxContextMenu.Opening += new CancelEventHandler(listboxContextMenu_Opening);
+            this.listboxContextMenu.ItemClicked += new ToolStripItemClickedEventHandler(listboxContextMenu_ItemClicked);
             this.listBoxUsers.ContextMenuStrip = listboxContextMenu;
 
             new Thread(this.getMessages).Start();
         }
 
-        private void lstBxAlbumsContextMenu_Opening(object sender, CancelEventArgs e)
+        private void listboxContextMenu_Opening(object sender, CancelEventArgs e)
         {
             // Clear the menu and add custom items.
             this.listboxContextMenu.Items.Clear();
@@ -46,12 +47,14 @@ namespace Chat_Client
             
         }
 
-        private void lstBxAlbumsContextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void listboxContextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
+            Channel channel = new Channel();
             this.listboxContextMenu.Hide();
             if (e.ClickedItem.ToString().Equals("Start private chat"))
             {
-                // TODO
+                channel.addClient(this.client);
+                channel.addClient(this.client.Channel.getClient(listBoxUsers.SelectedItem.ToString()));
             }
         }
 
