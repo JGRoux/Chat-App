@@ -80,6 +80,7 @@
             this.listBoxUsers.Location = new System.Drawing.Point(0, 0);
             this.listBoxUsers.Name = "listBoxUsers";
             this.listBoxUsers.Size = new System.Drawing.Size(187, 338);
+            this.listBoxUsers.Sorted = true;
             this.listBoxUsers.TabIndex = 0;
             // 
             // panelBottom
@@ -116,12 +117,6 @@
             this.btnSend.Text = "Send";
             this.btnSend.UseVisualStyleBackColor = true;
             this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
-            // 
-            // getConnectedClientTimer
-            // 
-            this.getConnectedClientTimer.Enabled = true;
-            this.getConnectedClientTimer.Interval = 1000;
-            this.getConnectedClientTimer.Tick += new System.EventHandler(this.getConnectedClientTimer_Tick);
             // 
             // ChatTab
             // 

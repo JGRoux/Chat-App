@@ -25,6 +25,7 @@ namespace Chat_Client
             InitializeComponent();
             this.client = client;
             new Thread(this.getMessages).Start();
+            this.getConnectedClients();
         }
 
         private void getConnectedClients()
@@ -36,23 +37,45 @@ namespace Chat_Client
         private void getMessages()
         {
             Chat_Library.Model.Message message;
-            if ((message = this.client.Connection.getMessage()).cmd.Equals("ClientsList")
-                || (message = this.client.Connection.getMessage()).cmd.Equals("NewClient"))
-                this.Invoke((setConnectedClient)setClientList, message);
-            else if ((message = this.client.Connection.getMessage()).cmd.Equals("NewMessage"))
-                this.Invoke((setNewText)setText, message);
+            while (true)
+            {
+                if ((message = this.client.Connection.getMessage()) != null)
+                {
+                    if (message.cmd.Equals("ClientsList"))
+                        this.Invoke((setConnectedClient)setClientList, message);
+                    else if(message.cmd.Equals("NewClient"))
+                        this.Invoke((setConnectedClient)setClient, message);
+                    else if (message.cmd.Equals("RemoveClient"))
+                        this.Invoke((setConnectedClient)removeClient, message);
+                    else if (message.cmd.Equals("NewMessage"))
+                        this.Invoke((setNewText)setText, message);
+                }
+            }
         }
 
         private delegate void setConnectedClient(Chat_Library.Model.Message message);
 
         private void setClientList(Chat_Library.Model.Message message)
         {
+            int i = 0;
             foreach (String name in message.getArgContents("name"))
-                if (!this.listBoxUsers.Items.Contains(name))
-                {
-                    this.listBoxUsers.Items.Add(name);
-                    this.txtBoxDiscussion.Text = "Client " + name + " is connected";
-                }
+            {
+                this.listBoxUsers.Items.Add(name);
+                i++;
+            }
+            this.txtBoxDiscussion.Text += "There are currently " + i.ToString() + " users connected" + Environment.NewLine;
+        }
+
+        private void setClient(Chat_Library.Model.Message message)
+        {
+            this.listBoxUsers.Items.Add(message.getArg("name"));
+            this.txtBoxDiscussion.Text += "Client " + message.getArg("name") + " is now connected" + Environment.NewLine;
+        }
+
+        private void removeClient(Chat_Library.Model.Message message)
+        {
+            this.listBoxUsers.Items.Remove(message.getArg("name"));
+            this.txtBoxDiscussion.Text += "Client " + message.getArg("name") + " has disconnected" + Environment.NewLine;
         }
 
         private delegate void setNewText(Chat_Library.Model.Message message);
@@ -71,16 +94,6 @@ namespace Chat_Client
             Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
             message.addArgument("text", this.txtBoxMessage.Text);
             client.Connection.sendMessage(message);
-        }
-
-        private void getConnectedClientTimer_Tick(object sender, EventArgs e)
-        {
-            this.getConnectedClients();
-        }
-
-        public void closeTab()
-        {
-            this.getConnectedClientTimer.Enabled = false;
         }
     }
 }

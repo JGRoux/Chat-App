@@ -15,6 +15,7 @@ namespace Chat_Library.Controller
 {
     public class Connection
     {
+        private static String delimiter = "<EOM>";
         public Socket socket { get; set; }
 
         public Connection(Socket socket)
@@ -41,33 +42,37 @@ namespace Chat_Library.Controller
             MemoryStream stream = new MemoryStream();
             js.WriteObject(stream, message);
             stream.Position = 0;
-            this.socket.Send(Encoding.UTF8.GetBytes(new StreamReader(stream).ReadToEnd()));
+            this.socket.Send(Encoding.UTF8.GetBytes(new StreamReader(stream).ReadToEnd() + delimiter));
         }
 
         // Gets a message from the server or a client.
         public Message getMessage()
         {
-            Message message = null;
-            while(message == null){
+            byte[] delimiterBytes = Encoding.UTF8.GetBytes(delimiter);
+            byte[] buffer = new Byte[1];
+            String msg = "";
+
+            do
+            {
                 try
                 {
                     if (this.socket.Available > 0)
                     {
-                        byte[] buffer = new Byte[this.socket.Available];
-                        this.socket.Receive(buffer);
-                        DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Message));
-                        MemoryStream stream = new MemoryStream(buffer);
-                        message = (Message)js.ReadObject(stream);
-                        return message;
+                        this.socket.Receive(buffer, 1, SocketFlags.None);
+                        msg += Encoding.UTF8.GetString(buffer);
                     }
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("erreur:"+e.ToString());
+                    Console.WriteLine("erreur:" + e.ToString());
                 }
                 Thread.Sleep(1);
-            }
-            return null;
+            } while (!msg.Contains(delimiter)) ;
+            msg = msg.Replace(delimiter, "");
+            DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Message));
+            MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(msg));
+            Message message = (Message)js.ReadObject(stream);
+            return message;
         }
 
         public bool isAvailable()
