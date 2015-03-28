@@ -36,6 +36,7 @@
             this.btnSend = new System.Windows.Forms.Button();
             this.getConnectedClientTimer = new System.Windows.Forms.Timer(this.components);
             this.txtBoxDiscussion = new System.Windows.Forms.RichTextBox();
+            this.pictureButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -75,6 +76,7 @@
             // panelBottom
             // 
             this.panelBottom.BackColor = System.Drawing.Color.Transparent;
+            this.panelBottom.Controls.Add(this.pictureButton);
             this.panelBottom.Controls.Add(this.txtBoxMessage);
             this.panelBottom.Controls.Add(this.btnSend);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -91,14 +93,14 @@
             this.txtBoxMessage.Location = new System.Drawing.Point(0, 8);
             this.txtBoxMessage.Margin = new System.Windows.Forms.Padding(0);
             this.txtBoxMessage.Name = "txtBoxMessage";
-            this.txtBoxMessage.Size = new System.Drawing.Size(363, 20);
+            this.txtBoxMessage.Size = new System.Drawing.Size(312, 20);
             this.txtBoxMessage.TabIndex = 1;
             // 
             // btnSend
             // 
             this.btnSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSend.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSend.Location = new System.Drawing.Point(366, 6);
+            this.btnSend.Location = new System.Drawing.Point(323, 6);
             this.btnSend.Margin = new System.Windows.Forms.Padding(0);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(75, 23);
@@ -121,6 +123,15 @@
             this.txtBoxDiscussion.Size = new System.Drawing.Size(250, 338);
             this.txtBoxDiscussion.TabIndex = 1;
             this.txtBoxDiscussion.Text = "";
+            // 
+            // pictureButton
+            // 
+            this.pictureButton.BackgroundImage = global::Chat_Client.Properties.Resources.picture1;
+            this.pictureButton.Location = new System.Drawing.Point(401, 4);
+            this.pictureButton.Name = "pictureButton";
+            this.pictureButton.Size = new System.Drawing.Size(35, 26);
+            this.pictureButton.TabIndex = 2;
+            this.pictureButton.UseVisualStyleBackColor = true;
             // 
             // ChatTab
             // 
@@ -149,6 +160,7 @@
         private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.Timer getConnectedClientTimer;
         private System.Windows.Forms.RichTextBox txtBoxDiscussion;
+        private System.Windows.Forms.Button pictureButton;
 
     }
 }
