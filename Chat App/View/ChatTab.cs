@@ -48,7 +48,6 @@ namespace Chat_Client
             {
                 this.listboxContextMenu.Items.Add("Start private chat");
             }
-
         }
 
         private void listboxContextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -82,9 +81,16 @@ namespace Chat_Client
                         this.Invoke((setRemovedClient)removeClient, message);
                     else if (message.cmd.Equals("NewMessage"))
                         if (message.getArg("text") != null)
+                        {
                             this.Invoke((setNewText)setText, message);
+                            Console.WriteLine("PAS BIEN");
+                        }
                         else if (message.getArg("picture") != null)
+                        {
                             this.Invoke((setNewPicture)setPicture, message);
+                            Console.WriteLine("BIEN");
+                        }
+                            
                 }
             }
         }
@@ -136,10 +142,13 @@ namespace Chat_Client
                 foreach (String text in message.getArgContents("text"))
                     this.txtBoxDiscussion.Text += text + Environment.NewLine;*/
 
+            Console.WriteLine("coucou");
+
             Bitmap bitmap = (Bitmap)Base64ImageConverter.stringToImage(message.getArg("picture"));
+
             Clipboard.SetDataObject(bitmap);
             DataFormats.Format format = DataFormats.GetFormat(DataFormats.Bitmap);
-            //this.txtBoxDiscussion.Paste(format);
+            this.txtBoxDiscussion.Paste(format);
         }
 
         private void btnSend_Click(object sender, EventArgs e)
