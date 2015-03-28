@@ -158,8 +158,21 @@ namespace Chat_Client
             {
                 picturePath = openFileDialog.FileName;
             }
+
+            String pictureString = null;
+            Image img = Image.FromFile(picturePath);
+            
+            if (img.RawFormat.Equals(ImageFormat.Jpeg))
+            {
+                pictureString = Base64ImageConverter.imageToString(new Bitmap(picturePath), ImageFormat.Jpeg);
+            }
+            if (img.RawFormat.Equals(ImageFormat.Png))
+            {
+                pictureString = Base64ImageConverter.imageToString(new Bitmap(picturePath), ImageFormat.Png);
+            } 
+
             Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
-            message.addArgument("picture", picturePath);
+            message.addArgument("picture", pictureString);
             client.Connection.sendMessage(message);
         }
     }
