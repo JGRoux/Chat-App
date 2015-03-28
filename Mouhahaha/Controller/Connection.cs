@@ -68,6 +68,7 @@ namespace Chat_Library.Controller
                 }
                 Thread.Sleep(1);
             } while (!msg.Contains(delimiter));
+
             msg = msg.Replace(delimiter, "");
             DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Message));
             MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(msg));
@@ -84,7 +85,6 @@ namespace Chat_Library.Controller
         public void closeSocket()
         {
             this.socket.Close();
-            this.socket.Disconnect(true);
         }
 
         //Test if the socket is deconnected

@@ -148,14 +148,19 @@ namespace Chat_Client
             client.Connection.sendMessage(message);
         }
 
-        private void getConnectedClientTimer_Tick(object sender, EventArgs e)
+        private void pictureButton_Click(object sender, EventArgs e)
         {
-            this.getConnectedClients();
-        }
-
-        public void closeTab()
-        {
-            this.getConnectedClientTimer.Enabled = false;
+            String picturePath = null;
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Images (*.png, *.jpg)|*.png;*.jpg";
+            openFileDialog.Title = "Select a picture";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                picturePath = openFileDialog.FileName;
+            }
+            Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
+            message.addArgument("picture", picturePath);
+            client.Connection.sendMessage(message);
         }
     }
 }

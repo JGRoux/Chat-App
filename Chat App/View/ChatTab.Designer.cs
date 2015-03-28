@@ -28,15 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.txtBoxDiscussion = new System.Windows.Forms.RichTextBox();
             this.listBoxUsers = new System.Windows.Forms.ListBox();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.pictureButton = new System.Windows.Forms.Button();
             this.txtBoxMessage = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
-            this.getConnectedClientTimer = new System.Windows.Forms.Timer(this.components);
-            this.txtBoxDiscussion = new System.Windows.Forms.RichTextBox();
-            this.pictureButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -64,6 +62,16 @@
             this.splitContainer.SplitterDistance = 250;
             this.splitContainer.TabIndex = 1;
             // 
+            // txtBoxDiscussion
+            // 
+            this.txtBoxDiscussion.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtBoxDiscussion.Location = new System.Drawing.Point(0, 0);
+            this.txtBoxDiscussion.Name = "txtBoxDiscussion";
+            this.txtBoxDiscussion.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.txtBoxDiscussion.Size = new System.Drawing.Size(250, 338);
+            this.txtBoxDiscussion.TabIndex = 0;
+            this.txtBoxDiscussion.Text = "";
+            // 
             // listBoxUsers
             // 
             this.listBoxUsers.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -87,6 +95,19 @@
             this.panelBottom.Size = new System.Drawing.Size(441, 35);
             this.panelBottom.TabIndex = 0;
             // 
+            // pictureButton
+            // 
+            this.pictureButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureButton.BackgroundImage = global::Chat_Client.Properties.Resources.picture;
+            this.pictureButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pictureButton.Location = new System.Drawing.Point(333, 6);
+            this.pictureButton.Name = "pictureButton";
+            this.pictureButton.Size = new System.Drawing.Size(30, 23);
+            this.pictureButton.TabIndex = 2;
+            this.pictureButton.UseVisualStyleBackColor = true;
+            this.pictureButton.Click += new System.EventHandler(this.pictureButton_Click);
+            // 
             // txtBoxMessage
             // 
             this.txtBoxMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -109,12 +130,6 @@
             this.btnSend.Text = "Send";
             this.btnSend.UseVisualStyleBackColor = true;
             this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
-            // 
-            // getConnectedClientTimer
-            // 
-            this.getConnectedClientTimer.Enabled = true;
-            this.getConnectedClientTimer.Interval = 1000;
-            this.getConnectedClientTimer.Tick += new System.EventHandler(this.getConnectedClientTimer_Tick);
             // 
             // ChatTab
             // 
@@ -141,7 +156,6 @@
         private System.Windows.Forms.ListBox listBoxUsers;
         public System.Windows.Forms.TextBox txtBoxMessage;
         private System.Windows.Forms.Button btnSend;
-        private System.Windows.Forms.Timer getConnectedClientTimer;
         private System.Windows.Forms.RichTextBox txtBoxDiscussion;
         private System.Windows.Forms.Button pictureButton;
 
