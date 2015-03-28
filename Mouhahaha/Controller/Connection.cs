@@ -56,11 +56,11 @@ namespace Chat_Library.Controller
             {
                 try
                 {
-                    //if (this.socket.Available > 0)
-                    //{
+                    if (this.socket.Available > 0)
+                    {
                         this.socket.Receive(buffer, 1, SocketFlags.None);
                         msg += Encoding.UTF8.GetString(buffer);
-                    //}
+                    }
                 }
                 catch (System.Runtime.Serialization.SerializationException e)
                 {
