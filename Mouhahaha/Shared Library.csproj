@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\Connection.cs" />
-    <Compile Include="Controller\ImageConverter.cs" />
+    <Compile Include="Controller\Base64ImageConverter.cs" />
     <Compile Include="Model\Message.cs" />
     <Compile Include="Model\Channel.cs" />
     <Compile Include="Model\Client.cs" />

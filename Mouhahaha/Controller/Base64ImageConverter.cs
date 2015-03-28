@@ -9,10 +9,10 @@ using System.IO;
 
 namespace Chat_Library.Controller
 {
-    class ImageConverter
+    class Base64ImageConverter
     {
         // Converts an image to a base64 string.
-        public string ImageToString(Image image, ImageFormat format)
+        public static string imageToString(Image image, ImageFormat format)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -27,7 +27,7 @@ namespace Chat_Library.Controller
         }
 
         // Converts a base64 string to an image.
-        public Image StringToImage(string base64String)
+        public static Image stringToImage(string base64String)
         {
             // Convert Base64 String to byte[].
             byte[] imageBytes = Convert.FromBase64String(base64String);

@@ -13,6 +13,7 @@ using System.Net.Sockets;
 using Chat_Library.Controller;
 using System.Net;
 using System.Threading;
+using System.Drawing.Imaging;
 
 namespace Chat_Client
 {
@@ -43,7 +44,7 @@ namespace Chat_Client
             {
                 this.listboxContextMenu.Items.Add("Start private chat");
             }
-            
+
         }
 
         private void listboxContextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -71,11 +72,11 @@ namespace Chat_Client
                 this.Invoke((setConnectedClient)setClientList, message);
             else if ((message = this.client.Connection.getMessage()).cmd.Equals("NewMessage"))
             {
-                if(message.getArg("text") != null)
+                if (message.getArg("text") != null)
                 {
                     this.Invoke((setNewText)setText, message);
                 }
-                else if(message.getArg("picture") != null)
+                else if (message.getArg("picture") != null)
                 {
                     this.Invoke((setNewPicture)setPicture, message);
                 }
@@ -109,13 +110,13 @@ namespace Chat_Client
 
         private void setPicture(Chat_Library.Model.Message message)
         {
-            if (message.getArg("name") != null)
+            /*if (message.getArg("name") != null)
                 this.txtBoxDiscussion.Text += message.getArg("name") + ": " + message.getArg("picture") + Environment.NewLine;
-            /*else
+            else
                 foreach (String text in message.getArgContents("text"))
                     this.txtBoxDiscussion.Text += text + Environment.NewLine;*/
 
-            Bitmap bitmap = new Bitmap(message.getArg("picture"));
+            Bitmap bitmap = Base64ImageConverter.stringToImage(message.getArg("picture"));
             Clipboard.SetDataObject(bitmap);
             DataFormats.Format format = DataFormats.GetFormat(DataFormats.Bitmap);
             this.txtBoxDiscussion.Paste(format);
@@ -150,8 +151,21 @@ namespace Chat_Client
                 picturePath = openFileDialog.FileName;
             }
 
+            String pictureString = null;
+            Image img = Image.FromFile(picturePath);
+            
+            if (img.RawFormat.Equals(ImageFormat.Jpeg))
+            {
+                pictureString = Base64ImageConverter.imageToString(new Bitmap(picturePath), ImageFormat.Jpeg);
+            }
+
+            if (img.RawFormat.Equals(ImageFormat.Png))
+            {
+                pictureString = Base64ImageConverter.imageToString(new Bitmap(picturePath), ImageFormat.Png);
+            } 
+
             Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
-            message.addArgument("picture", picturePath);
+            message.addArgument("picture", pictureString);
             client.Connection.sendMessage(message);
         }
     }
