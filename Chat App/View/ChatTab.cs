@@ -118,7 +118,7 @@ namespace Chat_Client
                 foreach (String text in message.getArgContents("text"))
                     this.txtBoxDiscussion.Text += text + Environment.NewLine;*/
 
-            Bitmap bitmap = Base64ImageConverter.stringToImage(message.getArg("picture"));
+            Bitmap bitmap = (Bitmap)Base64ImageConverter.stringToImage(message.getArg("picture"));
             Clipboard.SetDataObject(bitmap);
             DataFormats.Format format = DataFormats.GetFormat(DataFormats.Bitmap);
             this.txtBoxDiscussion.Paste(format);
