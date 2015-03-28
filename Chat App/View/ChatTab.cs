@@ -18,13 +18,41 @@ namespace Chat_Client
 {
     public partial class ChatTab : UserControl
     {
+        private ContextMenuStrip listboxContextMenu;
+
         private Client client;
 
         public ChatTab(Client client)
         {
             InitializeComponent();
             this.client = client;
+
+            this.listboxContextMenu = new ContextMenuStrip();
+            this.listboxContextMenu.Opening += new CancelEventHandler(lstBxAlbumsContextMenu_Opening);
+            this.listboxContextMenu.ItemClicked += new ToolStripItemClickedEventHandler(lstBxAlbumsContextMenu_ItemClicked);
+            this.listBoxUsers.ContextMenuStrip = listboxContextMenu;
+
             new Thread(this.getMessages).Start();
+        }
+
+        private void lstBxAlbumsContextMenu_Opening(object sender, CancelEventArgs e)
+        {
+            // Clear the menu and add custom items.
+            this.listboxContextMenu.Items.Clear();
+            if (this.listBoxUsers.SelectedIndex != -1)
+            {
+                this.listboxContextMenu.Items.Add("Start private chat");
+            }
+            
+        }
+
+        private void lstBxAlbumsContextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            this.listboxContextMenu.Hide();
+            if (e.ClickedItem.ToString().Equals("Start private chat"))
+            {
+                // TODO
+            }
         }
 
         private void getConnectedClients()
