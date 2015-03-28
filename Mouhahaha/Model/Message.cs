@@ -12,8 +12,12 @@ namespace Chat_Library.Model
     {
         [DataMember(Name = "cmd")]
         public String cmd { get; set; }
+
         [DataMember(Name = "args")]
         public List<Argument> args { get; set; }
+
+        //The text content of the message
+        string content; 
 
         public Message()
         {
@@ -22,6 +26,13 @@ namespace Chat_Library.Model
         public Message(String cmd)
         {
             this.cmd = cmd;
+        }
+
+        public Message(String cmd, string content)
+        {
+            this.cmd = cmd;
+            this.content = content;
+
         }
 
         public void addArgument(String name, String content)

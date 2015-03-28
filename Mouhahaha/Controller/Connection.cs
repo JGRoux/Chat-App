@@ -48,23 +48,33 @@ namespace Chat_Library.Controller
         public Message getMessage()
         {
             Message message = null;
-            while(message == null){
-                try
+            while (message == null)
+            {
+                
+
+                if (this.socket.Available > 0)
                 {
-                    if (this.socket.Available > 0)
+                    byte[] buffer = new Byte[this.socket.Available];
+                    try
                     {
-                        byte[] buffer = new Byte[this.socket.Available];
                         this.socket.Receive(buffer);
                         DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Message));
                         MemoryStream stream = new MemoryStream(buffer);
                         message = (Message)js.ReadObject(stream);
                         return message;
                     }
+                    catch (System.Runtime.Serialization.SerializationException e)
+                    {
+                        message = new Message("msg", System.Text.Encoding.UTF8.GetString(buffer));
+                        return message;
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("erreur:" + e.ToString());
+                    }
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine("erreur:"+e.ToString());
-                }
+
+
                 Thread.Sleep(1);
             }
             return null;
