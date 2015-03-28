@@ -44,7 +44,7 @@ namespace Chat_Server
                     else if (message.cmd.Equals("ReqClients"))
                         this.reqClients();
                     else if (message.cmd.Equals("Broadcast"))
-                        this.broadcastMessage(message);
+                        this.broadcastIncomingMessage(message);
                     else if (message.cmd.Equals("Start private chat"))
                         this.startPrivateChat(message);
                     
@@ -141,7 +141,7 @@ namespace Chat_Server
             this.setConnectedClient(client, channel);
         }
 
-        // Send all clients name connected to channel
+        // Send clients name connected to channel
         private void reqClients()
         {
             Message message = new Message("ClientsList");
@@ -151,6 +151,7 @@ namespace Chat_Server
             this.client.Connection.sendMessage(message);
         }
 
+        // Broadcast that the client is connected
         private void broadcastClientConnected()
         {
             Message message = new Message("NewClient");
@@ -158,6 +159,7 @@ namespace Chat_Server
             this.broadcastMessage(message);
         }
 
+        // Broadcats that the client has disconnected
         private void broadcastClientDisconnected()
         {
             Message message = new Message("RemoveClient");
@@ -165,11 +167,17 @@ namespace Chat_Server
             this.broadcastMessage(message);
         }
 
-        // Send message to all clients connected to channel
-        private void broadcastMessage(Message message)
+        // Transform incoming message to broadcast it
+        private void broadcastIncomingMessage(Message message)
         {
             message.cmd = "NewMessage";
             message.addArgument("name", this.client.Username);
+            this.broadcastMessage(message);
+        }
+
+        // Send message to all clients connected to channel
+        private void broadcastMessage(Message message)
+        {
             foreach (Client client in this.client.Channel.getClientsList())
                 if (client != this.client)
                     client.Connection.sendMessage(message);

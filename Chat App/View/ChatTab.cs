@@ -74,7 +74,6 @@ namespace Chat_Client
             {
                 if ((message = this.client.Connection.getMessage()) != null)
                 {
-                    Console.WriteLine(message.cmd);
                     if (message.cmd.Equals("ClientsList"))
                         this.Invoke((setConnectedClientList)setClientList, message);
                     else if (message.cmd.Equals("NewClient"))
@@ -123,7 +122,7 @@ namespace Chat_Client
         private void setText(Chat_Library.Model.Message message)
         {
             if (message.getArg("name") != null)
-                this.txtBoxDiscussion.Text += message.getArg("name") + ": " + message.getArg("text") + Environment.NewLine;
+                this.txtBoxDiscussion.Text += "<" + message.getArg("name") + "> " + message.getArg("text") + Environment.NewLine;
             else
                 foreach (String text in message.getArgContents("text"))
                     this.txtBoxDiscussion.Text += text + Environment.NewLine;
@@ -148,6 +147,8 @@ namespace Chat_Client
             Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
             message.addArgument("text", this.txtBoxMessage.Text);
             client.Connection.sendMessage(message);
+            this.txtBoxDiscussion.Text += "Me: " + this.txtBoxMessage.Text + Environment.NewLine;
+            this.txtBoxMessage.Text = "";
         }
 
         private void pictureButton_Click(object sender, EventArgs e)
@@ -163,7 +164,7 @@ namespace Chat_Client
 
             String pictureString = null;
             Image img = Image.FromFile(picturePath);
-            
+
             if (img.RawFormat.Equals(ImageFormat.Jpeg))
             {
                 pictureString = Base64ImageConverter.imageToString(new Bitmap(picturePath), ImageFormat.Jpeg);
@@ -171,7 +172,7 @@ namespace Chat_Client
             if (img.RawFormat.Equals(ImageFormat.Png))
             {
                 pictureString = Base64ImageConverter.imageToString(new Bitmap(picturePath), ImageFormat.Png);
-            } 
+            }
 
             Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
             message.addArgument("picture", pictureString);
