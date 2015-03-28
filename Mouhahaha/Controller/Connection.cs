@@ -48,23 +48,32 @@ namespace Chat_Library.Controller
         public Message getMessage()
         {
             Message message = null;
-            while(message == null){
-                try
+            while (message == null)
+            {
+                
+
+                if (this.socket.Available > 0)
                 {
-                    if (this.socket.Available > 0)
+                    byte[] buffer = new Byte[this.socket.Available];
+                    try
                     {
-                        byte[] buffer = new Byte[this.socket.Available];
                         this.socket.Receive(buffer);
                         DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Message));
                         MemoryStream stream = new MemoryStream(buffer);
                         message = (Message)js.ReadObject(stream);
                         return message;
                     }
+                    catch (System.Runtime.Serialization.SerializationException e)
+                    {
+                        Console.WriteLine("erreur:" + e.ToString());
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("erreur:" + e.ToString());
+                    }
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine("erreur:"+e.ToString());
-                }
+
+
                 Thread.Sleep(1);
             }
             return null;
@@ -80,6 +89,41 @@ namespace Chat_Library.Controller
         {
             this.socket.Close();
             this.socket.Disconnect(true);
+        }
+
+        //Test if the socket is deconnected
+        public bool isDeconnected()
+        {
+            //ancez un appel Send non bloquant de zéro octet. Si l'appel est
+            //retourné avec succès ou lève un code d'erreur WAEWOULDBLOCK (10035), 
+            //le socket est toujours connecté ; sinon, le socket n'est plus connecté.
+            
+            //We make a Send call with 0 bytes
+            //If the send is a success, the socket is connected
+            byte[] buffer =new Byte[0];
+
+            
+            try {
+                int result = this.socket.Send(buffer);
+
+                if (result == 0)
+                    return false;
+            }
+            catch( System.ObjectDisposedException e)
+            {
+                Console.WriteLine("ObjectDisposedException, trying the connection of the socket");
+                return true;
+            }
+            catch(System.Net.Sockets.SocketException e)
+            {
+
+                Console.WriteLine("Socket Excetption, trying the connection of the socket");
+                return true;
+            }
+            return true;
+         
+            //   return this.socket.Poll(10, SelectMode.SelectRead) && (this.socket.Available == 0) ;
+	   
         }
     }
 }
