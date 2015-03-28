@@ -28,7 +28,6 @@ namespace Chat_Server
         private void threadClientMethod()
         {
             Message message;
-            //this.connection.sendMessage(new Message("test"));
             while (this.connection.isAvailable())
             {
                 if ((message = this.connection.getMessage()) != null)
@@ -37,8 +36,10 @@ namespace Chat_Server
                         this.authClient(message);
                     else if (message.cmd.Equals("ReqClients"))
                         this.reqClients();
+                    else if (message.cmd.Equals("Broadcast"))
+                        this.broadcastMessage(message);
                 }
-                
+
             }
         }
 
@@ -48,7 +49,7 @@ namespace Chat_Server
             foreach (Channel channel in this.channelsList)
                 if (channel.Uri.Equals(message.getArg("channel")))
                 {
-                    // Si la channel existe on test le login
+                    // If channel exist we test the password
                     this.checkCredentials(message, channel);
                     return;
                 }
@@ -63,7 +64,7 @@ namespace Chat_Server
             }
         }
 
-        // Vérification des logins fournies par le client
+        // Check logins given by the client
         private void checkCredentials(Message message, Channel channel)
         {
             Client client;
@@ -75,6 +76,7 @@ namespace Chat_Server
                     this.client = client;
                     this.client.isConnected = true;
                     this.client.Connection = this.connection;
+                    this.sendWelcome(channel, message.getArg("username"));
                     this.client.Connection.sendMessage(new Message("Connected"));
                 }
                 else
@@ -89,6 +91,22 @@ namespace Chat_Server
             }
         }
 
+        private void sendWelcome(Channel channel, String username)
+        {
+            int i = 0;
+            foreach (Client client in channel.getClientsList())
+                if (client.isConnected)
+                    i++;
+            Message message = new Message("NewMessage");
+            message.addArgument("text", "Welcome on channel " + channel.Name);
+            message.addArgument("text", "There are currently " + i.ToString() +" users connected");
+            this.client.Connection.sendMessage(message);
+            message = new Message("NewConnected");
+            message.addArgument("name", username);
+            this.broadcastMessage(message);
+        }
+
+        // Add a new client in the channel
         private void addClientToChannel(Message message, Channel channel)
         {
             Console.WriteLine("Add new client " + message.getArg("username") + " to channel " + message.getArg("channel"));
@@ -100,39 +118,27 @@ namespace Chat_Server
             this.client.Connection.sendMessage(new Message("Connected"));
         }
 
+        // Send all clients name connected to channel
         private void reqClients()
         {
             Message message = new Message("ClientsList");
             foreach (Client client in this.client.Channel.getClientsList())
-                message.addArgument("name", client.Username);
+                if (client.isConnected && client != this.client)
+                {
+                    message.addArgument("name", client.Username);
+                    Console.WriteLine("Req:" + client.Username);
+                }
             this.client.Connection.sendMessage(message);
         }
 
-        /*private void FwdMsg()
+        // Send message to all clients connected to channel
+        private void broadcastMessage(Message message)
         {
-            
-            for (int i = 0; i < socketList.Count; i++)
-            {
-                if (((Socket)socketList[i]).Connected)
-                {
-                    try
-                    {
-                        int bytesSent = ((Socket)socketList[i]).Send(msg, msg.Length, SocketFlags.None);
-                    }
-
-                    catch
-                    {
-                        Console.Write(((Socket)socketList[i]).GetHashCode() + " déconnecté");
-                    }
-                }
-                else
-                {
-                    socketList.Remove((Socket)socketList[i]);
-                    i--;
-                }
-            }
-        }*/
-
-
+            message.cmd = "NewMessage";
+            message.addArgument("name", this.client.Username);
+            foreach (Client client in this.client.Channel.getClientsList())
+                if (client != this.client)
+                    client.Connection.sendMessage(message);
+        }
     }
 }
