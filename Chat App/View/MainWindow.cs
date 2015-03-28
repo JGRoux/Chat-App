@@ -151,6 +151,8 @@ namespace Chat_Client
                         this.tabControl.TabPages[this.tabControl.SelectedIndex].Text = tab.getComboBox().Text + "     ";
                         this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Clear();
                         this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(chatTab);
+
+                        chatTab.CreatePrivateChat += chatTab_CreatePrivateChat;
                     }
                     else
                     {
@@ -163,6 +165,12 @@ namespace Chat_Client
                     Console.WriteLine(exception.ToString());
                 }
             }
+        }
+
+        private void chatTab_CreatePrivateChat(object sender, EventArgs e)
+        {
+            var Ucp = sender as ChatTab;
+            // TODO
         }
     }
 }
