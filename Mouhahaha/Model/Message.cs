@@ -12,8 +12,11 @@ namespace Chat_Library.Model
     {
         [DataMember(Name = "cmd")]
         public String cmd { get; set; }
+
         [DataMember(Name = "args")]
         public List<Argument> args { get; set; }
+
+     
 
         public Message()
         {

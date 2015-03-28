@@ -30,12 +30,13 @@
         {
             this.components = new System.ComponentModel.Container();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.txtBoxDiscussion = new System.Windows.Forms.TextBox();
             this.listBoxUsers = new System.Windows.Forms.ListBox();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.txtBoxMessage = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
             this.getConnectedClientTimer = new System.Windows.Forms.Timer(this.components);
+            this.txtBoxDiscussion = new System.Windows.Forms.RichTextBox();
+            this.pictureButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -63,16 +64,6 @@
             this.splitContainer.SplitterDistance = 250;
             this.splitContainer.TabIndex = 1;
             // 
-            // txtBoxDiscussion
-            // 
-            this.txtBoxDiscussion.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtBoxDiscussion.Location = new System.Drawing.Point(0, 0);
-            this.txtBoxDiscussion.Multiline = true;
-            this.txtBoxDiscussion.Name = "txtBoxDiscussion";
-            this.txtBoxDiscussion.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtBoxDiscussion.Size = new System.Drawing.Size(250, 338);
-            this.txtBoxDiscussion.TabIndex = 0;
-            // 
             // listBoxUsers
             // 
             this.listBoxUsers.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -86,6 +77,7 @@
             // panelBottom
             // 
             this.panelBottom.BackColor = System.Drawing.Color.Transparent;
+            this.panelBottom.Controls.Add(this.pictureButton);
             this.panelBottom.Controls.Add(this.txtBoxMessage);
             this.panelBottom.Controls.Add(this.btnSend);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -102,7 +94,7 @@
             this.txtBoxMessage.Location = new System.Drawing.Point(0, 8);
             this.txtBoxMessage.Margin = new System.Windows.Forms.Padding(0);
             this.txtBoxMessage.Name = "txtBoxMessage";
-            this.txtBoxMessage.Size = new System.Drawing.Size(363, 20);
+            this.txtBoxMessage.Size = new System.Drawing.Size(330, 20);
             this.txtBoxMessage.TabIndex = 1;
             // 
             // btnSend
@@ -118,6 +110,12 @@
             this.btnSend.UseVisualStyleBackColor = true;
             this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
             // 
+            // getConnectedClientTimer
+            // 
+            this.getConnectedClientTimer.Enabled = true;
+            this.getConnectedClientTimer.Interval = 1000;
+            this.getConnectedClientTimer.Tick += new System.EventHandler(this.getConnectedClientTimer_Tick);
+            // 
             // ChatTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -127,7 +125,6 @@
             this.Name = "ChatTab";
             this.Size = new System.Drawing.Size(441, 373);
             this.splitContainer.Panel1.ResumeLayout(false);
-            this.splitContainer.Panel1.PerformLayout();
             this.splitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
@@ -140,12 +137,13 @@
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainer;
-        public System.Windows.Forms.TextBox txtBoxDiscussion;
         private System.Windows.Forms.Panel panelBottom;
         private System.Windows.Forms.ListBox listBoxUsers;
         public System.Windows.Forms.TextBox txtBoxMessage;
         private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.Timer getConnectedClientTimer;
+        private System.Windows.Forms.RichTextBox txtBoxDiscussion;
+        private System.Windows.Forms.Button pictureButton;
 
     }
 }
