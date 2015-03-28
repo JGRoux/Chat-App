@@ -43,20 +43,20 @@ namespace Chat_Server
             }
         }
 
-        // Authentification du client
+        // Client authentification.
         private void authClient(Message message)
         {
             foreach (Channel channel in this.channelsList)
                 if (channel.Uri.Equals(message.getArg("channel")))
                 {
-                    // If channel exist we test the password
+                    // If channel exists we test the password.
                     this.checkCredentials(message, channel);
                     return;
                 }
 
             if (this.client == null)
             {
-                // Si la channel n'existe pas on la crée et on ajoute l'utilisateur sur la channel
+                // If the channel does not exist, we create it and we add the user to the channel.
                 Console.WriteLine("Create new channel:" + message.getArg("channel"));
                 Channel channel = new Channel(null, message.getArg("channel"));
                 this.channelsList.Add(channel);
@@ -64,13 +64,13 @@ namespace Chat_Server
             }
         }
 
-        // Check logins given by the client
+        // Check logins given by the client.
         private void checkCredentials(Message message, Channel channel)
         {
             Client client;
             if ((client = channel.getClient(message.getArg("username"))) != null)
             {
-                // Client already exist on channel so we check the password
+                // Client already exist on channel so we check the password.
                 if (client.Password.Equals(message.getArg("password")))
                 {
                     this.client = client;
@@ -86,7 +86,7 @@ namespace Chat_Server
             }
             else
             {
-                // Client does not exits on channel so we add the client to the channel
+                // Client does not exits on channel so we add the client to the channel.
                 this.addClientToChannel(message, channel);
             }
         }
@@ -106,7 +106,7 @@ namespace Chat_Server
             this.broadcastMessage(message);
         }
 
-        // Add a new client in the channel
+        // Add a new client in the channel.
         private void addClientToChannel(Message message, Channel channel)
         {
             Console.WriteLine("Add new client " + message.getArg("username") + " to channel " + message.getArg("channel"));
@@ -118,7 +118,7 @@ namespace Chat_Server
             this.client.Connection.sendMessage(new Message("Connected"));
         }
 
-        // Send all clients name connected to channel
+        // Send all clients name connected to channel.
         private void reqClients()
         {
             Message message = new Message("ClientsList");
@@ -131,7 +131,7 @@ namespace Chat_Server
             this.client.Connection.sendMessage(message);
         }
 
-        // Send message to all clients connected to channel
+        // Send message to all clients connected to channel.
         private void broadcastMessage(Message message)
         {
             message.cmd = "NewMessage";
