@@ -74,12 +74,13 @@ namespace Chat_Client
             {
                 if ((message = this.client.Connection.getMessage()) != null)
                 {
+                    Console.WriteLine(message.cmd);
                     if (message.cmd.Equals("ClientsList"))
-                        this.Invoke((setConnectedClient)setClientList, message);
+                        this.Invoke((setConnectedClientList)setClientList, message);
                     else if (message.cmd.Equals("NewClient"))
                         this.Invoke((setConnectedClient)setClient, message);
                     else if (message.cmd.Equals("RemoveClient"))
-                        this.Invoke((setConnectedClient)removeClient, message);
+                        this.Invoke((setRemovedClient)removeClient, message);
                     else if (message.cmd.Equals("NewMessage"))
                         if (message.getArg("text") != null)
                             this.Invoke((setNewText)setText, message);
@@ -89,7 +90,11 @@ namespace Chat_Client
             }
         }
 
+        private delegate void setConnectedClientList(Chat_Library.Model.Message message);
         private delegate void setConnectedClient(Chat_Library.Model.Message message);
+        private delegate void setRemovedClient(Chat_Library.Model.Message message);
+        private delegate void setNewText(Chat_Library.Model.Message message);
+        private delegate void setNewPicture(Chat_Library.Model.Message message);
 
         private void setClientList(Chat_Library.Model.Message message)
         {
@@ -104,6 +109,7 @@ namespace Chat_Client
 
         private void setClient(Chat_Library.Model.Message message)
         {
+            Console.WriteLine("test");
             this.listBoxUsers.Items.Add(message.getArg("name"));
             this.txtBoxDiscussion.Text += "Client " + message.getArg("name") + " is now connected" + Environment.NewLine;
         }
@@ -114,8 +120,6 @@ namespace Chat_Client
             this.txtBoxDiscussion.Text += "Client " + message.getArg("name") + " has disconnected" + Environment.NewLine;
         }
 
-        private delegate void setNewText(Chat_Library.Model.Message message);
-
         private void setText(Chat_Library.Model.Message message)
         {
             if (message.getArg("name") != null)
@@ -124,8 +128,6 @@ namespace Chat_Client
                 foreach (String text in message.getArgContents("text"))
                     this.txtBoxDiscussion.Text += text + Environment.NewLine;
         }
-
-        private delegate void setNewPicture(Chat_Library.Model.Message message);
 
         private void setPicture(Chat_Library.Model.Message message)
         {
@@ -154,7 +156,6 @@ namespace Chat_Client
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Images (*.png, *.jpg)|*.png;*.jpg";
             openFileDialog.Title = "Select a picture";
-
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 picturePath = openFileDialog.FileName;
@@ -162,16 +163,15 @@ namespace Chat_Client
 
             String pictureString = null;
             Image img = Image.FromFile(picturePath);
-
+            
             if (img.RawFormat.Equals(ImageFormat.Jpeg))
             {
                 pictureString = Base64ImageConverter.imageToString(new Bitmap(picturePath), ImageFormat.Jpeg);
             }
-
             if (img.RawFormat.Equals(ImageFormat.Png))
             {
                 pictureString = Base64ImageConverter.imageToString(new Bitmap(picturePath), ImageFormat.Png);
-            }
+            } 
 
             Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
             message.addArgument("picture", pictureString);
