@@ -21,8 +21,9 @@ namespace Chat_Client
     {
         private ContextMenuStrip listboxContextMenu;
 
-        private Client client;
-
+        public Client client { get; set; }
+        public Client clientSelected { get; set; }
+             
         public EventHandler CreatePrivateChat;
 
         public ChatTab(Client client)
@@ -54,9 +55,7 @@ namespace Chat_Client
             this.listboxContextMenu.Hide();
             if (e.ClickedItem.ToString().Equals("Start private chat"))
             {
-                /*Channel channel = new Channel();
-                channel.addClient(this.client);
-                channel.addClient(this.client.Channel.getClient(listBoxUsers.SelectedItem.ToString()));*/
+                clientSelected = this.client.Channel.getClient(listBoxUsers.SelectedItem.ToString());
                 CreatePrivateChat(this, e);
             }
         }
