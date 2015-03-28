@@ -117,6 +117,7 @@
             this.txtBoxMessage.Name = "txtBoxMessage";
             this.txtBoxMessage.Size = new System.Drawing.Size(330, 20);
             this.txtBoxMessage.TabIndex = 1;
+            this.txtBoxMessage.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtBoxMessage_KeyDown);
             // 
             // btnSend
             // 

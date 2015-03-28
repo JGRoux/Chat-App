@@ -108,7 +108,6 @@ namespace Chat_Client
 
         private void setClient(Chat_Library.Model.Message message)
         {
-            Console.WriteLine("test");
             this.listBoxUsers.Items.Add(message.getArg("name"));
             this.txtBoxDiscussion.Text += "Client " + message.getArg("name") + " is now connected" + Environment.NewLine;
         }
@@ -139,16 +138,7 @@ namespace Chat_Client
             Bitmap bitmap = (Bitmap)Base64ImageConverter.stringToImage(message.getArg("picture"));
             Clipboard.SetDataObject(bitmap);
             DataFormats.Format format = DataFormats.GetFormat(DataFormats.Bitmap);
-            //this.txtBoxDiscussion.Paste(format);
-        }
-
-        private void btnSend_Click(object sender, EventArgs e)
-        {
-            Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
-            message.addArgument("text", this.txtBoxMessage.Text);
-            client.Connection.sendMessage(message);
-            this.txtBoxDiscussion.Text += "Me: " + this.txtBoxMessage.Text + Environment.NewLine;
-            this.txtBoxMessage.Text = "";
+            this.txtBoxDiscussion.Paste(format);
         }
 
         private void pictureButton_Click(object sender, EventArgs e)
@@ -177,6 +167,35 @@ namespace Chat_Client
             Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
             message.addArgument("picture", pictureString);
             client.Connection.sendMessage(message);
+        }
+
+        // Send message on send button click
+        private void btnSend_Click(object sender, EventArgs e)
+        {
+            this.sendMessage();
+        }
+
+        // Send message on key entered press
+        private void txtBoxMessage_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                this.sendMessage();
+                e.Handled = e.SuppressKeyPress = true; // Allow to suppress the 'ding' sound
+            }
+        }
+
+        // Send message in txtboxmessage to broadcast
+        private void sendMessage()
+        {
+            if (!this.txtBoxMessage.Text.Equals(""))
+            {
+                Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
+                message.addArgument("text", this.txtBoxMessage.Text);
+                client.Connection.sendMessage(message);
+                this.txtBoxDiscussion.Text += "Me: " + this.txtBoxMessage.Text + Environment.NewLine;
+                this.txtBoxMessage.Text = "";
+            }
         }
     }
 }
