@@ -37,6 +37,7 @@ namespace Chat_Client
             this.listBoxUsers.ContextMenuStrip = listboxContextMenu;
 
             new Thread(this.getMessages).Start();
+            this.getConnectedClients();
         }
 
         private void listboxContextMenu_Opening(object sender, CancelEventArgs e)
@@ -69,18 +70,21 @@ namespace Chat_Client
         private void getMessages()
         {
             Chat_Library.Model.Message message;
-            if ((message = this.client.Connection.getMessage()).cmd.Equals("ClientsList")
-                || (message = this.client.Connection.getMessage()).cmd.Equals("NewClient"))
-                this.Invoke((setConnectedClient)setClientList, message);
-            else if ((message = this.client.Connection.getMessage()).cmd.Equals("NewMessage"))
+            while (true)
             {
-                if (message.getArg("text") != null)
+                if ((message = this.client.Connection.getMessage()) != null)
                 {
-                    this.Invoke((setNewText)setText, message);
-                }
-                else if (message.getArg("picture") != null)
-                {
-                    this.Invoke((setNewPicture)setPicture, message);
+                    if (message.cmd.Equals("ClientsList"))
+                        this.Invoke((setConnectedClient)setClientList, message);
+                    else if (message.cmd.Equals("NewClient"))
+                        this.Invoke((setConnectedClient)setClient, message);
+                    else if (message.cmd.Equals("RemoveClient"))
+                        this.Invoke((setConnectedClient)removeClient, message);
+                    else if (message.cmd.Equals("NewMessage"))
+                        if (message.getArg("text") != null)
+                            this.Invoke((setNewText)setText, message);
+                        else if (message.getArg("picture") != null)
+                            this.Invoke((setNewPicture)setPicture, message);
                 }
             }
         }
@@ -89,12 +93,25 @@ namespace Chat_Client
 
         private void setClientList(Chat_Library.Model.Message message)
         {
+            int i = 0;
             foreach (String name in message.getArgContents("name"))
-                if (!this.listBoxUsers.Items.Contains(name))
                 {
                     this.listBoxUsers.Items.Add(name);
-                    this.txtBoxDiscussion.Text = "Client " + name + " is connected";
+                i++;
+            }
+            this.txtBoxDiscussion.Text += "There are currently " + i.ToString() + " users connected" + Environment.NewLine;
+        }
+
+        private void setClient(Chat_Library.Model.Message message)
+        {
+            this.listBoxUsers.Items.Add(message.getArg("name"));
+            this.txtBoxDiscussion.Text += "Client " + message.getArg("name") + " is now connected" + Environment.NewLine;
                 }
+
+        private void removeClient(Chat_Library.Model.Message message)
+        {
+            this.listBoxUsers.Items.Remove(message.getArg("name"));
+            this.txtBoxDiscussion.Text += "Client " + message.getArg("name") + " has disconnected" + Environment.NewLine;
         }
 
         private delegate void setNewText(Chat_Library.Model.Message message);
@@ -121,7 +138,7 @@ namespace Chat_Client
             Bitmap bitmap = (Bitmap)Base64ImageConverter.stringToImage(message.getArg("picture"));
             Clipboard.SetDataObject(bitmap);
             DataFormats.Format format = DataFormats.GetFormat(DataFormats.Bitmap);
-            this.txtBoxDiscussion.Paste(format);
+            //this.txtBoxDiscussion.Paste(format);
         }
 
         private void btnSend_Click(object sender, EventArgs e)
@@ -139,36 +156,6 @@ namespace Chat_Client
         public void closeTab()
         {
             this.getConnectedClientTimer.Enabled = false;
-        }
-
-        private void pictureButton_Click(object sender, EventArgs e)
-        {
-            String picturePath = null;
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Images (*.png, *.jpg)|*.png;*.jpg";
-            openFileDialog.Title = "Select a picture";
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                picturePath = openFileDialog.FileName;
-            }
-
-            String pictureString = null;
-            Image img = Image.FromFile(picturePath);
-            
-            if (img.RawFormat.Equals(ImageFormat.Jpeg))
-            {
-                pictureString = Base64ImageConverter.imageToString(new Bitmap(picturePath), ImageFormat.Jpeg);
-            }
-
-            if (img.RawFormat.Equals(ImageFormat.Png))
-            {
-                pictureString = Base64ImageConverter.imageToString(new Bitmap(picturePath), ImageFormat.Png);
-            } 
-
-            Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
-            message.addArgument("picture", pictureString);
-            client.Connection.sendMessage(message);
         }
     }
 }

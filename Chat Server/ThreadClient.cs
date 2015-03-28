@@ -76,7 +76,6 @@ namespace Chat_Server
                 {
                     channel.getClientsList().Remove(client);
                 }
-               
             }
         }
 
@@ -120,11 +119,7 @@ namespace Chat_Server
                 // Client already exist on channel so we check the password
                 if (client.Password.Equals(message.getArg("password")))
                 {
-                    this.client = client;
-                    this.client.isConnected = true;
-                    this.client.Connection = this.connection;
-                    this.sendWelcome(channel, message.getArg("username"));
-                    this.client.Connection.sendMessage(new Message("Connected"));
+                    this.setConnectedClient(client, channel);
                 }
                 else
                 {
@@ -138,33 +133,39 @@ namespace Chat_Server
             }
         }
 
+        private void setConnectedClient(Client client, Channel channel)
+        {
+            Console.WriteLine("Client " + client.Username + " is now connected to channel "+ channel.Name);
+            this.client = client;
+            this.client.isConnected = true;
+            this.client.Connection = this.connection;
+            this.client.Connection.sendMessage(new Message("Connected"));
+            this.sendWelcome(channel, this.client.Username);
+        }
+
         private void sendWelcome(Channel channel, String username)
         {
-            int i = 0;
-
-            foreach (Client client in channel.getClientsList())
-                if (client.isConnected)
-                    i++;
-            
             Message message = new Message("NewMessage");
-            message.addArgument("text", "Welcome on channel " + channel.Name);
-            message.addArgument("text", "There are currently " + i.ToString() +" users connected");
+            message.addArgument("text", "Welcome on channel " + channel.Uri);
             this.client.Connection.sendMessage(message);
-            message = new Message("NewConnected");
-            message.addArgument("name", username);
-            this.broadcastMessage(message);
+            this.broadcastClientConnected(username);
         }
 
         // Add a new client in the channel
         private void addClientToChannel(Message message, Channel channel)
         {
             Console.WriteLine("Add new client " + message.getArg("username") + " to channel " + message.getArg("channel"));
-            this.client = new Client(channel);
-            this.client.setCredentials(message.getArg("username"), message.getArg("password"));
-            this.client.isConnected = true;
-            this.client.Connection = this.connection;
-            channel.addClient(this.client);
-            this.client.Connection.sendMessage(new Message("Connected"));
+            Client client = new Client(channel);
+            client.setCredentials(message.getArg("username"), message.getArg("password"));
+            channel.addClient(client);
+            this.setConnectedClient(client, channel);
+        }
+
+        private void broadcastClientConnected(String username)
+        {
+            Message message = new Message("NewConnected");
+            message.addArgument("name", username);
+            this.broadcastMessage(message);
         }
 
         // Send all clients name connected to channel

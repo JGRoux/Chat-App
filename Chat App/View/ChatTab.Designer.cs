@@ -71,6 +71,7 @@
             this.listBoxUsers.Location = new System.Drawing.Point(0, 0);
             this.listBoxUsers.Name = "listBoxUsers";
             this.listBoxUsers.Size = new System.Drawing.Size(187, 338);
+            this.listBoxUsers.Sorted = true;
             this.listBoxUsers.TabIndex = 0;
             // 
             // panelBottom
@@ -114,28 +115,6 @@
             this.getConnectedClientTimer.Enabled = true;
             this.getConnectedClientTimer.Interval = 1000;
             this.getConnectedClientTimer.Tick += new System.EventHandler(this.getConnectedClientTimer_Tick);
-            // 
-            // txtBoxDiscussion
-            // 
-            this.txtBoxDiscussion.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtBoxDiscussion.Location = new System.Drawing.Point(0, 0);
-            this.txtBoxDiscussion.Name = "txtBoxDiscussion";
-            this.txtBoxDiscussion.Size = new System.Drawing.Size(250, 338);
-            this.txtBoxDiscussion.TabIndex = 1;
-            this.txtBoxDiscussion.Text = "";
-            // 
-            // pictureButton
-            // 
-            this.pictureButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureButton.BackgroundImage = global::Chat_Client.Properties.Resources.picture1;
-            this.pictureButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureButton.Location = new System.Drawing.Point(333, 6);
-            this.pictureButton.Name = "pictureButton";
-            this.pictureButton.Size = new System.Drawing.Size(30, 23);
-            this.pictureButton.TabIndex = 2;
-            this.pictureButton.UseVisualStyleBackColor = true;
-            this.pictureButton.Click += new System.EventHandler(this.pictureButton_Click);
             // 
             // ChatTab
             // 
