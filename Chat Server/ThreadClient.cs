@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Collections;
 using Chat_Library.Controller;
 using Chat_Library.Model;
@@ -16,6 +17,7 @@ namespace Chat_Server
         private Client client;
         private Connection connection;
         private List<Channel> channelsList;
+        private System.Timers.Timer watchDog;
 
         public ThreadClient(Connection connection, List<Channel> channelsList)
         {
@@ -23,6 +25,14 @@ namespace Chat_Server
             this.channelsList = channelsList;
             Thread newThreadClient = new Thread(threadClientMethod);
             newThreadClient.Start();
+            Thread connectedThread = new Thread(checkIfStilConnected);
+            connectedThread.Start();
+            
+
+            watchDog = new System.Timers.Timer();
+            watchDog.Elapsed += new ElapsedEventHandler(TimeOut);
+            watchDog.Interval = 5000;
+            watchDog.Enabled = true;
         }
 
         private void threadClientMethod()
@@ -38,9 +48,35 @@ namespace Chat_Server
                         this.reqClients();
                     else if (message.cmd.Equals("Broadcast"))
                         this.broadcastMessage(message);
+                    //Reset of the timer
+                    watchDog.Stop();
+                    watchDog.Start();
                 }
 
             }
+        }
+
+        private void checkIfStilConnected()
+        {
+            if(connection.isDeconnected())
+            {
+                connection.closeSocket();
+                foreach(Channel channel in channelsList)
+                {
+                    channel.getClientsList().Remove(client);
+                }
+               
+            }
+        }
+
+        private void TimeOut(object source, ElapsedEventArgs e)
+        {
+            connection.closeSocket();
+            foreach (Channel channel in channelsList)
+            {
+                channel.getClientsList().Remove(client);
+            }
+
         }
 
         // Authentification du client
@@ -94,9 +130,11 @@ namespace Chat_Server
         private void sendWelcome(Channel channel, String username)
         {
             int i = 0;
+
             foreach (Client client in channel.getClientsList())
                 if (client.isConnected)
                     i++;
+            
             Message message = new Message("NewMessage");
             message.addArgument("text", "Welcome on channel " + channel.Name);
             message.addArgument("text", "There are currently " + i.ToString() +" users connected");
