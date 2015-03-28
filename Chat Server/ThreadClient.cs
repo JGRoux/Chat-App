@@ -38,8 +38,9 @@ namespace Chat_Server
                         this.reqClients();
                     else if (message.cmd.Equals("Broadcast"))
                         this.broadcastMessage(message);
+                    else if (message.cmd.Equals("BroadcastPicture"))
+                        this.broadcastPicture(message);
                 }
-
             }
         }
 
@@ -135,6 +136,15 @@ namespace Chat_Server
         private void broadcastMessage(Message message)
         {
             message.cmd = "NewMessage";
+            message.addArgument("name", this.client.Username);
+            foreach (Client client in this.client.Channel.getClientsList())
+                if (client != this.client)
+                    client.Connection.sendMessage(message);
+        }
+
+        private void broadcastPicture(Message message)
+        {
+            message.cmd = "NewPicture";
             message.addArgument("name", this.client.Username);
             foreach (Client client in this.client.Channel.getClientsList())
                 if (client != this.client)

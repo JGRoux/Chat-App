@@ -41,6 +41,13 @@ namespace Chat_Client
                 this.Invoke((setConnectedClient)setClientList, message);
             else if ((message = this.client.Connection.getMessage()).cmd.Equals("NewMessage"))
                 this.Invoke((setNewText)setText, message);
+            else if ((message = this.client.Connection.getMessage()).cmd.Equals("NewPicture"))
+            {
+                Bitmap bitmap = new Bitmap(message.getArg("picture"));
+                Clipboard.SetDataObject(bitmap);
+                DataFormats.Format format = DataFormats.GetFormat(DataFormats.Bitmap);
+                this.txtBoxDiscussion.Paste(format);
+            }
         }
 
         private delegate void setConnectedClient(Chat_Library.Model.Message message);
@@ -81,6 +88,24 @@ namespace Chat_Client
         public void closeTab()
         {
             this.getConnectedClientTimer.Enabled = false;
+        }
+
+        private void pictureButton_Click(object sender, EventArgs e)
+        {
+            String picturePath = null;
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Images (*.png, *.jpg)|*.png;*.jpg";
+            openFileDialog.Title = "Select a picture";
+            //openFileDialog.Multiselect = false;
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                picturePath = openFileDialog.FileName;
+                Console.WriteLine("path: " + picturePath);
+            }
+            Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
+            message.addArgument("picture", picturePath);
+            client.Connection.sendMessage(message);
         }
     }
 }

@@ -132,6 +132,7 @@
             this.pictureButton.Size = new System.Drawing.Size(35, 26);
             this.pictureButton.TabIndex = 2;
             this.pictureButton.UseVisualStyleBackColor = true;
+            this.pictureButton.Click += new System.EventHandler(this.pictureButton_Click);
             // 
             // ChatTab
             // 
