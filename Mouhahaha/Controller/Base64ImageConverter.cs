@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Chat_Library.Controller
 {
-    class Base64ImageConverter
+    public class Base64ImageConverter
     {
         // Converts an image to a base64 string.
         public static string imageToString(Image image, ImageFormat format)

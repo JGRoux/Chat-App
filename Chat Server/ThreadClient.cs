@@ -48,12 +48,23 @@ namespace Chat_Server
                         this.reqClients();
                     else if (message.cmd.Equals("Broadcast"))
                         this.broadcastMessage(message);
+                    else if (message.cmd.Equals("Start private chat"))
+                        this.startPrivateChat(message);
+                    
                     //Reset of the timer
                     watchDog.Stop();
                     watchDog.Start();
                 }
 
             }
+        }
+
+        private void startPrivateChat(Message message)
+        {
+            Console.WriteLine("Create new channel:" + message.getArg("channel"));
+            Channel channel = new Channel(null, message.getArg("channel"));
+            this.channelsList.Add(channel);
+            this.addClientToChannel(message, channel);
         }
 
         private void checkIfStilConnected()

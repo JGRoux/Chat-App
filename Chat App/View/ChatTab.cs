@@ -21,8 +21,9 @@ namespace Chat_Client
     {
         private ContextMenuStrip listboxContextMenu;
 
-        private Client client;
-
+        public Client client { get; set; }
+        public Client clientSelected { get; set; }
+             
         public EventHandler CreatePrivateChat;
 
         public ChatTab(Client client)
@@ -55,9 +56,7 @@ namespace Chat_Client
             this.listboxContextMenu.Hide();
             if (e.ClickedItem.ToString().Equals("Start private chat"))
             {
-                /*Channel channel = new Channel();
-                channel.addClient(this.client);
-                channel.addClient(this.client.Channel.getClient(listBoxUsers.SelectedItem.ToString()));*/
+                clientSelected = this.client.Channel.getClient(listBoxUsers.SelectedItem.ToString());
                 CreatePrivateChat(this, e);
             }
         }
@@ -136,7 +135,7 @@ namespace Chat_Client
                 foreach (String text in message.getArgContents("text"))
                     this.txtBoxDiscussion.Text += text + Environment.NewLine;*/
 
-            Bitmap bitmap = Base64ImageConverter.stringToImage(message.getArg("picture"));
+            Bitmap bitmap = (Bitmap)Base64ImageConverter.stringToImage(message.getArg("picture"));
             Clipboard.SetDataObject(bitmap);
             DataFormats.Format format = DataFormats.GetFormat(DataFormats.Bitmap);
             //this.txtBoxDiscussion.Paste(format);
