@@ -93,14 +93,14 @@
             this.txtBoxMessage.Location = new System.Drawing.Point(0, 8);
             this.txtBoxMessage.Margin = new System.Windows.Forms.Padding(0);
             this.txtBoxMessage.Name = "txtBoxMessage";
-            this.txtBoxMessage.Size = new System.Drawing.Size(312, 20);
+            this.txtBoxMessage.Size = new System.Drawing.Size(330, 20);
             this.txtBoxMessage.TabIndex = 1;
             // 
             // btnSend
             // 
             this.btnSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSend.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSend.Location = new System.Drawing.Point(323, 6);
+            this.btnSend.Location = new System.Drawing.Point(366, 6);
             this.btnSend.Margin = new System.Windows.Forms.Padding(0);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(75, 23);
@@ -126,10 +126,13 @@
             // 
             // pictureButton
             // 
+            this.pictureButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureButton.BackgroundImage = global::Chat_Client.Properties.Resources.picture1;
-            this.pictureButton.Location = new System.Drawing.Point(401, 4);
+            this.pictureButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pictureButton.Location = new System.Drawing.Point(333, 6);
             this.pictureButton.Name = "pictureButton";
-            this.pictureButton.Size = new System.Drawing.Size(35, 26);
+            this.pictureButton.Size = new System.Drawing.Size(30, 23);
             this.pictureButton.TabIndex = 2;
             this.pictureButton.UseVisualStyleBackColor = true;
             this.pictureButton.Click += new System.EventHandler(this.pictureButton_Click);

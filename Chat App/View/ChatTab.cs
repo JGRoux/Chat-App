@@ -11,7 +11,6 @@ using Chat_Client.Model;
 using Chat_Library.Model;
 using System.Net.Sockets;
 using Chat_Library.Controller;
-using Chat_Library.Model;
 using System.Net;
 using System.Threading;
 
@@ -49,10 +48,10 @@ namespace Chat_Client
 
         private void listboxContextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            Channel channel = new Channel();
             this.listboxContextMenu.Hide();
             if (e.ClickedItem.ToString().Equals("Start private chat"))
             {
+                Channel channel = new Channel();
                 channel.addClient(this.client);
                 channel.addClient(this.client.Channel.getClient(listBoxUsers.SelectedItem.ToString()));
             }
@@ -71,13 +70,15 @@ namespace Chat_Client
                 || (message = this.client.Connection.getMessage()).cmd.Equals("NewClient"))
                 this.Invoke((setConnectedClient)setClientList, message);
             else if ((message = this.client.Connection.getMessage()).cmd.Equals("NewMessage"))
-                this.Invoke((setNewText)setText, message);
-            else if ((message = this.client.Connection.getMessage()).cmd.Equals("NewPicture"))
             {
-                Bitmap bitmap = new Bitmap(message.getArg("picture"));
-                Clipboard.SetDataObject(bitmap);
-                DataFormats.Format format = DataFormats.GetFormat(DataFormats.Bitmap);
-                this.txtBoxDiscussion.Paste(format);
+                if(message.getArg("text") != null)
+                {
+                    this.Invoke((setNewText)setText, message);
+                }
+                else if(message.getArg("picture") != null)
+                {
+                    this.Invoke((setNewPicture)setPicture, message);
+                }
             }
         }
 
@@ -104,6 +105,22 @@ namespace Chat_Client
                     this.txtBoxDiscussion.Text += text + Environment.NewLine;
         }
 
+        private delegate void setNewPicture(Chat_Library.Model.Message message);
+
+        private void setPicture(Chat_Library.Model.Message message)
+        {
+            if (message.getArg("name") != null)
+                this.txtBoxDiscussion.Text += message.getArg("name") + ": " + message.getArg("picture") + Environment.NewLine;
+            /*else
+                foreach (String text in message.getArgContents("text"))
+                    this.txtBoxDiscussion.Text += text + Environment.NewLine;*/
+
+            Bitmap bitmap = new Bitmap(message.getArg("picture"));
+            Clipboard.SetDataObject(bitmap);
+            DataFormats.Format format = DataFormats.GetFormat(DataFormats.Bitmap);
+            this.txtBoxDiscussion.Paste(format);
+        }
+
         private void btnSend_Click(object sender, EventArgs e)
         {
             Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
@@ -127,13 +144,12 @@ namespace Chat_Client
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Images (*.png, *.jpg)|*.png;*.jpg";
             openFileDialog.Title = "Select a picture";
-            //openFileDialog.Multiselect = false;
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 picturePath = openFileDialog.FileName;
-                Console.WriteLine("path: " + picturePath);
             }
+
             Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
             message.addArgument("picture", picturePath);
             client.Connection.sendMessage(message);
