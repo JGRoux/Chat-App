@@ -17,22 +17,19 @@ namespace Chat_Server
         private Client client;
         private Connection connection;
         private List<Channel> channelsList;
-        private System.Timers.Timer watchDog;
+        private System.Timers.Timer timer;
 
         public ThreadClient(Connection connection, List<Channel> channelsList)
         {
             this.connection = connection;
             this.channelsList = channelsList;
             Thread newThreadClient = new Thread(threadClientMethod);
-            newThreadClient.Start();
-            Thread connectedThread = new Thread(checkIfStilConnected);
-            connectedThread.Start();
-            
+            newThreadClient.Start();            
 
-            watchDog = new System.Timers.Timer();
-            watchDog.Elapsed += new ElapsedEventHandler(TimeOut);
-            watchDog.Interval = 5000;
-            watchDog.Enabled = true;
+            this.timer = new System.Timers.Timer();
+            this.timer.Elapsed += new ElapsedEventHandler(TimeOut);
+            this.timer.Interval = 1000000;
+            this.timer.Enabled = true;
         }
 
         private void threadClientMethod()
@@ -51,11 +48,10 @@ namespace Chat_Server
                     else if (message.cmd.Equals("Start private chat"))
                         this.startPrivateChat(message);
                     
-                    //Reset of the timer
-                    watchDog.Stop();
-                    watchDog.Start();
+                    //Reset the timer
+                    this.timer.Stop();
+                    this.timer.Start();
                 }
-
             }
         }
 
@@ -67,26 +63,10 @@ namespace Chat_Server
             this.addClientToChannel(message, channel);
         }
 
-        private void checkIfStilConnected()
-        {
-            if(connection.isDeconnected())
-            {
-                connection.closeSocket();
-                foreach(Channel channel in channelsList)
-                {
-                    channel.getClientsList().Remove(client);
-                }
-            }
-        }
-
         private void TimeOut(object source, ElapsedEventArgs e)
         {
+            this.broadcastClientDisconnected();
             connection.closeSocket();
-            foreach (Channel channel in channelsList)
-            {
-                channel.getClientsList().Remove(client);
-            }
-
         }
 
         // Authentification du client
@@ -148,7 +128,7 @@ namespace Chat_Server
             Message message = new Message("NewMessage");
             message.addArgument("text", "Welcome on channel " + channel.Uri);
             this.client.Connection.sendMessage(message);
-            this.broadcastClientConnected(username);
+            this.broadcastClientConnected();
         }
 
         // Add a new client in the channel
@@ -161,24 +141,28 @@ namespace Chat_Server
             this.setConnectedClient(client, channel);
         }
 
-        private void broadcastClientConnected(String username)
-        {
-            Message message = new Message("NewConnected");
-            message.addArgument("name", username);
-            this.broadcastMessage(message);
-        }
-
         // Send all clients name connected to channel
         private void reqClients()
         {
             Message message = new Message("ClientsList");
             foreach (Client client in this.client.Channel.getClientsList())
                 if (client.isConnected && client != this.client)
-                {
                     message.addArgument("name", client.Username);
-                    Console.WriteLine("Req:" + client.Username);
-                }
             this.client.Connection.sendMessage(message);
+        }
+
+        private void broadcastClientConnected()
+        {
+            Message message = new Message("NewClient");
+            message.addArgument("name", this.client.Username);
+            this.broadcastMessage(message);
+        }
+
+        private void broadcastClientDisconnected()
+        {
+            Message message = new Message("RemoveClient");
+            message.addArgument("name", this.client.Username);
+            this.broadcastMessage(message);
         }
 
         // Send message to all clients connected to channel
