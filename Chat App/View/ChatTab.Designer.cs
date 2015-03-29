@@ -36,6 +36,7 @@
             this.txtBoxMessage = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
             this.getConnectedClientTimer = new System.Windows.Forms.Timer(this.components);
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -52,6 +53,7 @@
             // 
             // splitContainer.Panel1
             // 
+            this.splitContainer.Panel1.Controls.Add(this.richTextBox1);
             this.splitContainer.Panel1.Controls.Add(this.txtBoxDiscussion);
             this.splitContainer.Panel1MinSize = 200;
             // 
@@ -120,8 +122,17 @@
             // getConnectedClientTimer
             // 
             this.getConnectedClientTimer.Enabled = true;
-            this.getConnectedClientTimer.Interval = 1000;
+            this.getConnectedClientTimer.Interval = 3000;
             this.getConnectedClientTimer.Tick += new System.EventHandler(this.getConnectedClientTimer_Tick);
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(0, 233);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(250, 105);
+            this.richTextBox1.TabIndex = 1;
+            this.richTextBox1.Text = "";
+            this.richTextBox1.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.richTextBox1_LinkClicked);
             // 
             // ChatTab
             // 
@@ -151,6 +162,7 @@
         public System.Windows.Forms.TextBox txtBoxMessage;
         private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.Timer getConnectedClientTimer;
+        private System.Windows.Forms.RichTextBox richTextBox1;
 
     }
 }

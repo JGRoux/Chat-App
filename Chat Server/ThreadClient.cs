@@ -71,11 +71,11 @@ namespace Chat_Server
 
         private void TimeOut(object source, ElapsedEventArgs e)
         {
-            connection.closeSocket();
+            /*connection.closeSocket();
             foreach (Channel channel in channelsList)
             {
                 channel.getClientsList().Remove(client);
-            }
+            }*/
 
         }
 
@@ -175,7 +175,7 @@ namespace Chat_Server
             message.cmd = "NewMessage";
             message.addArgument("name", this.client.Username);
             foreach (Client client in this.client.Channel.getClientsList())
-                if (client != this.client)
+                
                     client.Connection.sendMessage(message);
         }
     }

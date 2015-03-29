@@ -82,5 +82,10 @@ namespace Chat_Client
         {
             this.getConnectedClientTimer.Enabled = false;
         }
+
+        private void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(e.LinkText);
+        }
     }
 }

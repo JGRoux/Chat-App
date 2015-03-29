@@ -139,7 +139,7 @@ namespace Chat_Client
                     String[] Uri = client.Channel.Uri.Split('/');
                     client.Connection.connect(Uri[0], 8000);
                     Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
-                    message.addArgument("channel", Uri[1]);
+                    message.addArgument("channel", Uri[0]);
                     message.addArgument("username", client.Username);
                     message.addArgument("password", client.Password);
                     client.Connection.sendMessage(message);

@@ -50,18 +50,20 @@ namespace Chat_Library.Controller
             Message message = null;
             while (message == null)
             {
-                
-
                 if (this.socket.Available > 0)
                 {
                     byte[] buffer = new Byte[this.socket.Available];
                     try
                     {
                         this.socket.Receive(buffer);
+                        
+                        
                         DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Message));
                         MemoryStream stream = new MemoryStream(buffer);
                         message = (Message)js.ReadObject(stream);
                         return message;
+
+
                     }
                     catch (System.Runtime.Serialization.SerializationException e)
                     {
@@ -94,9 +96,6 @@ namespace Chat_Library.Controller
         //Test if the socket is deconnected
         public bool isDeconnected()
         {
-            //ancez un appel Send non bloquant de zéro octet. Si l'appel est
-            //retourné avec succès ou lève un code d'erreur WAEWOULDBLOCK (10035), 
-            //le socket est toujours connecté ; sinon, le socket n'est plus connecté.
             
             //We make a Send call with 0 bytes
             //If the send is a success, the socket is connected
