@@ -111,7 +111,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\ic_info_outline_48px-48.png" />
     <Content Include="Resources\logo.ico" />
+    <None Include="Resources\picture.png" />
     <None Include="Resources\1426533101_ic_close_48px-48.png" />
     <None Include="Resources\1424468312_ic_add_48px-48.png" />
   </ItemGroup>

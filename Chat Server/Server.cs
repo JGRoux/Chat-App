@@ -23,11 +23,11 @@ namespace Chat_Server
                              SocketType.Stream,
                              ProtocolType.Tcp);
             Console.WriteLine("Server listen on port 8000");
-            //On lie la socket au point de communication
+            // Links the socket to the communication point.
             this.serverSocket.Bind(new IPEndPoint(Dns.GetHostAddresses("127.0.0.1")[0], 8000));
         }
 
-        // Infinite loop to wait for client connection
+        // Infinite loop to wait for client connection.
         public void start()
         {
             while (true)

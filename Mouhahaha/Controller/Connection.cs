@@ -15,6 +15,7 @@ namespace Chat_Library.Controller
 {
     public class Connection
     {
+        private static String delimiter = "<EOM>";
         public Socket socket { get; set; }
 
         public Connection(Socket socket)
@@ -41,44 +42,38 @@ namespace Chat_Library.Controller
             MemoryStream stream = new MemoryStream();
             js.WriteObject(stream, message);
             stream.Position = 0;
-            this.socket.Send(Encoding.UTF8.GetBytes(new StreamReader(stream).ReadToEnd()));
+            this.socket.Send(Encoding.UTF8.GetBytes(new StreamReader(stream).ReadToEnd() + delimiter));
         }
 
         // Gets a message from the server or a client.
         public Message getMessage()
         {
-            Message message = null;
-            while (message == null)
-            {
-                if (this.socket.Available > 0)
+            byte[] delimiterBytes = Encoding.UTF8.GetBytes(delimiter);
+            byte[] buffer = new Byte[1];
+            String msg = "";
+
+            do
                 {
-                    byte[] buffer = new Byte[this.socket.Available];
                     try
                     {
-                        this.socket.Receive(buffer);
-                        
-                        
-                        DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Message));
-                        MemoryStream stream = new MemoryStream(buffer);
-                        message = (Message)js.ReadObject(stream);
-                        return message;
-
-
-                    }
-                    catch (System.Runtime.Serialization.SerializationException e)
+                    if (this.socket.Available > 0)
                     {
-                        Console.WriteLine("erreur:" + e.ToString());
+                        this.socket.Receive(buffer, 1, SocketFlags.None);
+                        msg += Encoding.UTF8.GetString(buffer);
+                    }
                     }
                     catch (Exception e)
                     {
                         Console.WriteLine("erreur:" + e.ToString());
                     }
-                }
-
-
                 Thread.Sleep(1);
-            }
-            return null;
+            } while (!msg.Contains(delimiter));
+
+            msg = msg.Replace(delimiter, "");
+            DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Message));
+            MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(msg));
+            Message message = (Message)js.ReadObject(stream);
+            return message;
         }
 
         public bool isAvailable()
@@ -90,7 +85,6 @@ namespace Chat_Library.Controller
         public void closeSocket()
         {
             this.socket.Close();
-            this.socket.Disconnect(true);
         }
 
         //Test if the socket is deconnected
@@ -99,21 +93,22 @@ namespace Chat_Library.Controller
             
             //We make a Send call with 0 bytes
             //If the send is a success, the socket is connected
-            byte[] buffer =new Byte[0];
+            byte[] buffer = new Byte[0];
 
             
-            try {
+            try
+            {
                 int result = this.socket.Send(buffer);
 
                 if (result == 0)
                     return false;
             }
-            catch( System.ObjectDisposedException e)
+            catch (System.ObjectDisposedException e)
             {
                 Console.WriteLine("ObjectDisposedException, trying the connection of the socket");
                 return true;
             }
-            catch(System.Net.Sockets.SocketException e)
+            catch (System.Net.Sockets.SocketException e)
             {
 
                 Console.WriteLine("Socket Excetption, trying the connection of the socket");

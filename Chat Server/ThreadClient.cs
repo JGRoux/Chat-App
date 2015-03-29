@@ -17,7 +17,7 @@ namespace Chat_Server
         private Client client;
         private Connection connection;
         private List<Channel> channelsList;
-        private System.Timers.Timer watchDog;
+        private System.Timers.Timer timer;
 
         public ThreadClient(Connection connection, List<Channel> channelsList)
         {
@@ -25,14 +25,11 @@ namespace Chat_Server
             this.channelsList = channelsList;
             Thread newThreadClient = new Thread(threadClientMethod);
             newThreadClient.Start();
-            Thread connectedThread = new Thread(checkIfStilConnected);
-            connectedThread.Start();
             
-
-            watchDog = new System.Timers.Timer();
-            watchDog.Elapsed += new ElapsedEventHandler(TimeOut);
-            watchDog.Interval = 5000;
-            watchDog.Enabled = true;
+            this.timer = new System.Timers.Timer();
+            this.timer.Elapsed += new ElapsedEventHandler(TimeOut);
+            this.timer.Interval = 1000000;
+            this.timer.Enabled = true;
         }
 
         private void threadClientMethod()
@@ -47,31 +44,29 @@ namespace Chat_Server
                     else if (message.cmd.Equals("ReqClients"))
                         this.reqClients();
                     else if (message.cmd.Equals("Broadcast"))
-                        this.broadcastMessage(message);
-                    //Reset of the timer
-                    watchDog.Stop();
-                    watchDog.Start();
-                }
+                        this.broadcastIncomingMessage(message);
+                    else if (message.cmd.Equals("NewPrivateChat"))
+                        this.newPrivateChat(message);
 
+                    //Reset the timer
+                    this.timer.Stop();
+                    this.timer.Start();
             }
         }
+        }
 
-        private void checkIfStilConnected()
+        private void newPrivateChat(Message message)
         {
-            if(connection.isDeconnected())
-            {
-                connection.closeSocket();
-                foreach(Channel channel in channelsList)
-                {
-                    channel.getClientsList().Remove(client);
-                }
-               
-            }
+            Console.WriteLine("Create new channel:" + message.getArg("channel"));
+            Channel channel = new Channel(null, message.getArg("channel"));
+            this.channelsList.Add(channel);
+            this.addClientToChannel(message, channel);
         }
 
         private void TimeOut(object source, ElapsedEventArgs e)
         {
-            /*connection.closeSocket();
+            this.broadcastClientDisconnected();
+            connection.closeSocket();
             foreach (Channel channel in channelsList)
             {
                 channel.getClientsList().Remove(client);
@@ -109,11 +104,7 @@ namespace Chat_Server
                 // Client already exist on channel so we check the password
                 if (client.Password.Equals(message.getArg("password")))
                 {
-                    this.client = client;
-                    this.client.isConnected = true;
-                    this.client.Connection = this.connection;
-                    this.sendWelcome(channel, message.getArg("username"));
-                    this.client.Connection.sendMessage(new Message("Connected"));
+                    this.setConnectedClient(client, channel);
                 }
                 else
                 {
@@ -127,53 +118,71 @@ namespace Chat_Server
             }
         }
 
+        private void setConnectedClient(Client client, Channel channel)
+        {
+            Console.WriteLine("Client " + client.Username + " is now connected to channel "+ channel.Name);
+            this.client = client;
+            this.client.isConnected = true;
+            this.client.Connection = this.connection;
+            this.client.Connection.sendMessage(new Message("Connected"));
+            this.sendWelcome(channel, this.client.Username);
+        }
+
         private void sendWelcome(Channel channel, String username)
         {
-            int i = 0;
-
-            foreach (Client client in channel.getClientsList())
-                if (client.isConnected)
-                    i++;
-            
             Message message = new Message("NewMessage");
-            message.addArgument("text", "Welcome on channel " + channel.Name);
-            message.addArgument("text", "There are currently " + i.ToString() +" users connected");
+            message.addArgument("text", "Welcome on channel " + channel.Uri);
             this.client.Connection.sendMessage(message);
-            message = new Message("NewConnected");
-            message.addArgument("name", username);
-            this.broadcastMessage(message);
+            this.broadcastClientConnected();
         }
 
         // Add a new client in the channel
         private void addClientToChannel(Message message, Channel channel)
         {
             Console.WriteLine("Add new client " + message.getArg("username") + " to channel " + message.getArg("channel"));
-            this.client = new Client(channel);
-            this.client.setCredentials(message.getArg("username"), message.getArg("password"));
-            this.client.isConnected = true;
-            this.client.Connection = this.connection;
-            channel.addClient(this.client);
-            this.client.Connection.sendMessage(new Message("Connected"));
+            Client client = new Client(channel);
+            client.setCredentials(message.getArg("username"), message.getArg("password"));
+            channel.addClient(client);
+            this.setConnectedClient(client, channel);
         }
 
-        // Send all clients name connected to channel
+        // Send clients name connected to channel
         private void reqClients()
         {
             Message message = new Message("ClientsList");
             foreach (Client client in this.client.Channel.getClientsList())
                 if (client.isConnected && client != this.client)
-                {
                     message.addArgument("name", client.Username);
-                    Console.WriteLine("Req:" + client.Username);
-                }
             this.client.Connection.sendMessage(message);
+        }
+
+        // Broadcast that the client is connected
+        private void broadcastClientConnected()
+        {
+            Message message = new Message("NewClient");
+            message.addArgument("name", this.client.Username);
+            this.broadcastMessage(message);
+        }
+
+        // Broadcats that the client has disconnected
+        private void broadcastClientDisconnected()
+                {
+            Message message = new Message("RemoveClient");
+            message.addArgument("name", this.client.Username);
+            this.broadcastMessage(message);
+                }
+
+        // Transform incoming message to broadcast it
+        private void broadcastIncomingMessage(Message message)
+        {
+            message.cmd = "NewMessage";
+            message.addArgument("name", this.client.Username);
+            this.broadcastMessage(message);
         }
 
         // Send message to all clients connected to channel
         private void broadcastMessage(Message message)
         {
-            message.cmd = "NewMessage";
-            message.addArgument("name", this.client.Username);
             foreach (Client client in this.client.Channel.getClientsList())
                 
                     client.Connection.sendMessage(message);
