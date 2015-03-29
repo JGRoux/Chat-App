@@ -124,6 +124,7 @@ namespace Chat_Server
                 {
                     // If channel exist we test the password
                     this.checkCredentials(message, channel);
+
                     return;
                 }
 

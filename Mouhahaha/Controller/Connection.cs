@@ -54,15 +54,15 @@ namespace Chat_Library.Controller
 
             do
             {
-                try
-                {
-                    this.socket.Receive(buffer, 1, SocketFlags.None);
-                    msg += Encoding.UTF8.GetString(buffer);
-                }
+                    try
+                    {
+                        this.socket.Receive(buffer, 1, SocketFlags.None);
+                        msg += Encoding.UTF8.GetString(buffer);
+                    }
                 catch (SocketException)
-                {
-                    throw new SocketException();
-                }
+                    {
+                        throw new SocketException();
+                    }
                 Thread.Sleep(1);
             } while (!msg.Contains(delimiter));
 
