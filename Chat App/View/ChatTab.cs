@@ -139,7 +139,6 @@ namespace Chat_Client
             else
                 foreach (String text in message.getArgContents("text"))
                     this.txtBoxDiscussion.Text += text + Environment.NewLine;*/
-
             Bitmap bitmap = (Bitmap)Base64ImageConverter.stringToImage(message.getArg("picture"));
             Clipboard.SetDataObject(bitmap);
             DataFormats.Format format = DataFormats.GetFormat(DataFormats.Bitmap);
@@ -148,30 +147,17 @@ namespace Chat_Client
 
         private void pictureButton_Click(object sender, EventArgs e)
         {
-            String picturePath = null;
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Images (*.png, *.jpg)|*.png;*.jpg";
             openFileDialog.Title = "Select a picture";
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                picturePath = openFileDialog.FileName;
+                Image img = Image.FromFile(openFileDialog.FileName);
+                String pictureString = Base64ImageConverter.imageToString(new Bitmap(img, new Size(50,50)), img.RawFormat);
+                Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
+                message.addArgument("picture", pictureString);
+                client.Connection.sendMessage(message);
             }
-
-            String pictureString = null;
-            Image img = Image.FromFile(picturePath);
-
-            if (img.RawFormat.Equals(ImageFormat.Jpeg))
-            {
-                pictureString = Base64ImageConverter.imageToString(new Bitmap(picturePath), ImageFormat.Jpeg);
-            }
-            if (img.RawFormat.Equals(ImageFormat.Png))
-            {
-                pictureString = Base64ImageConverter.imageToString(new Bitmap(picturePath), ImageFormat.Png);
-            }
-
-            Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
-            message.addArgument("picture", pictureString);
-            client.Connection.sendMessage(message);
         }
 
         // Send message on send button click
@@ -198,7 +184,7 @@ namespace Chat_Client
                 Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
                 message.addArgument("text", this.txtBoxMessage.Text);
                 client.Connection.sendMessage(message);
-                this.txtBoxDiscussion.Text += "Me: " + this.txtBoxMessage.Text + Environment.NewLine;
+                this.txtBoxDiscussion.Text += "<Me> " + this.txtBoxMessage.Text + Environment.NewLine;
                 this.txtBoxMessage.Text = "";
             }
         }
@@ -206,6 +192,11 @@ namespace Chat_Client
         private void txtBoxDiscussion_MouseDown(object sender, MouseEventArgs e)
         {
             this.txtBoxMessage.Focus();
+        }
+
+        private void txtBoxDiscussion_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(e.LinkText);
         }
     }
 }

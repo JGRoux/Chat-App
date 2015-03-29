@@ -89,7 +89,7 @@
             // pictureBoxChannelUriHelp
             // 
             this.pictureBoxChannelUriHelp.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBoxChannelUriHelp.Image = global::Chat_Client.Properties.Resources.ic_info_outline_48px_48;
+            this.pictureBoxChannelUriHelp.Image = global::Chat_Client.Properties.Resources.icon_info;
             this.pictureBoxChannelUriHelp.Location = new System.Drawing.Point(38, 49);
             this.pictureBoxChannelUriHelp.Name = "pictureBoxChannelUriHelp";
             this.pictureBoxChannelUriHelp.Size = new System.Drawing.Size(20, 20);
