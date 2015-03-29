@@ -47,6 +47,12 @@ namespace Chat_Server
                         this.broadcastIncomingMessage(message);
                     else if (message.cmd.Equals("NewPrivateChat"))
                         this.newPrivateChat(message);
+                    else if (message.cmd.Equals("NewPrivateChatOtherSide"))
+                    {
+                        Console.WriteLine("OK1.5");
+                        this.broadcastMessage(message);
+                    }
+                        
                     
                     //Reset the timer
                     this.timer.Stop();

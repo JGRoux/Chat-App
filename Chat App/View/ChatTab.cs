@@ -22,7 +22,8 @@ namespace Chat_Client
         private ContextMenuStrip listboxContextMenu;
 
         public Client client { get; set; }
-        public Client clientSelected { get; set; }
+        public String clientSelected { get; set; }
+        public String clientCaller { get; set; }
 
         public EventHandler CreatePrivateChat;
 
@@ -47,7 +48,7 @@ namespace Chat_Client
             if (this.listBoxUsers.SelectedIndex != -1)
             {
                 this.listboxContextMenu.Items.Add("Start private chat");
-                clientSelected = this.client.Channel.getClient(listBoxUsers.SelectedItem.ToString());
+                this.clientSelected = this.listBoxUsers.SelectedItem.ToString();
             }
         }
 
@@ -80,6 +81,18 @@ namespace Chat_Client
                         this.Invoke((setConnectedClient)setClient, message);
                     else if (message.cmd.Equals("RemoveClient"))
                         this.Invoke((setRemovedClient)removeClient, message);
+                    else if (message.cmd.Equals("NewPrivateChatOtherSide"))
+                    {
+                        Console.WriteLine("OK2");
+                        if(message.getArg("receiver") == this.client.Username)
+                        {
+                            Console.WriteLine("receiver : " + this.client.Username);
+                            this.clientSelected = null;
+                            this.clientCaller = message.getArg("sender");
+                            CreatePrivateChat(this, new EventArgs());
+                        }
+                    }
+                        
                     else if (message.cmd.Equals("NewMessage"))
                         if (message.getArg("text") != null)
                             this.Invoke((setNewText)setText, message);
