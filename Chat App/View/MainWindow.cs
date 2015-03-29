@@ -119,11 +119,11 @@ namespace Chat_Client
         private void createConnection(object sender, EventArgs e)
         {
             ConnectionTab tab = (ConnectionTab)sender;
-            if(tab.getComboBox().Text.Equals(""))
+            if (tab.getComboBox().Text.Equals(""))
                 MessageBox.Show("Please select a channel !");
-            else if(tab.getTxtBoxUsername().Text.Equals(""))
+            else if (tab.getTxtBoxUsername().Text.Equals(""))
                 MessageBox.Show("Please enter a username !");
-            else if(tab.getTxtBoxPwd().Text.Equals(""))
+            else if (tab.getTxtBoxPwd().Text.Equals(""))
                 MessageBox.Show("Please enter a password !");
             if (!tab.getComboBox().Text.Equals("") && !tab.getTxtBoxPwd().Text.Equals("") && !tab.getTxtBoxUsername().Text.Equals(""))
             {
@@ -135,7 +135,7 @@ namespace Chat_Client
                     String[] Uri = client.Channel.Uri.Split('/');
                     client.Connection.connect(Uri[0], 8000);
                     Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
-                    message.addArgument("channel", Uri[0]);
+                    message.addArgument("channel", Uri[1]);
                     message.addArgument("username", client.Username);
                     message.addArgument("password", client.Password);
                     client.Connection.sendMessage(message);
@@ -175,46 +175,43 @@ namespace Chat_Client
                 String[] Uri = client.Channel.Uri.Split('/');
                 client.Connection.connect(Uri[0], 8000);
 
-                if(chatTabCaller.clientSelected != null)
+                if (chatTabCaller.clientSelected != null)
                 {
                     channelName = Uri[1] + ": " + client.Username + " & " + chatTabCaller.clientSelected;
+                    Chat_Library.Model.Message message = new Chat_Library.Model.Message("NewPrivateChat");
+                    message.addArgument("name", chatTabCaller.clientSelected);
+                    client.Connection.sendMessage(message);
                 }
                 else
                 {
                     channelName = Uri[1] + ": " + chatTabCaller.clientCaller + " & " + client.Username;
+                    Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
+                    message.addArgument("channel", Uri[1]);
+                    message.addArgument("username", client.Username);
+                    message.addArgument("password", client.Password);
+                    client.Connection.sendMessage(message);
+                    if (client.Connection.getMessage().cmd.Equals("Connected"))
+                        Console.WriteLine("ok");
                 }
 
-                Chat_Library.Model.Message message = new Chat_Library.Model.Message("NewPrivateChat");
-                message.addArgument("channel", channelName);
-                message.addArgument("username", client.Username);
-                message.addArgument("password", client.Password);
-                client.Connection.sendMessage(message);
+                ChatTab chatTab = new ChatTab(client);
+                chatTab.Dock = System.Windows.Forms.DockStyle.Fill;
 
-                if (client.Connection.getMessage().cmd.Equals("Connected"))
-                {
-                    ChatTab chatTab = new ChatTab(client);
-                    chatTab.Dock = System.Windows.Forms.DockStyle.Fill;
+                this.tabControl.TabPages[this.tabControl.TabPages.Count - 1].Controls.Clear();
+                this.tabControl.TabPages.Insert(this.tabControl.TabPages.Count - 1, channelName + "     ");
+                this.tabControl.SelectedIndex = this.tabControl.TabPages.Count - 2;
+                this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(chatTab);
 
-                    this.tabControl.TabPages[this.tabControl.TabPages.Count - 1].Controls.Clear();
-                    this.tabControl.TabPages.Insert(this.tabControl.TabPages.Count - 1, channelName + "     ");
-                    this.tabControl.SelectedIndex = this.tabControl.TabPages.Count - 2;
-                    this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(chatTab);                   
+                chatTab.CreatePrivateChat += chatTab_CreatePrivateChat;
 
-                    chatTab.CreatePrivateChat += chatTab_CreatePrivateChat;
-                }
-                else
-                {
-                    MessageBox.Show("Wrong password !");
-                }
 
-                if (chatTabCaller.clientSelected != null)
+                /*if (chatTabCaller.clientSelected != null)
                 {
                     Console.WriteLine("OK1");
                     Chat_Library.Model.Message messageOtherSide = new Chat_Library.Model.Message("NewPrivateChatOtherSide");
                     message.addArgument("name", chatTabCaller.clientSelected);
                     client.Connection.sendMessage(messageOtherSide);
-                }
-                
+                }*/
             }
             catch (Exception exception)
             {
@@ -226,4 +223,4 @@ namespace Chat_Client
 
     }
 }
-        
+

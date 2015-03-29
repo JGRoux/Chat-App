@@ -47,11 +47,6 @@ namespace Chat_Server
                         this.broadcastIncomingMessage(message);
                     else if (message.cmd.Equals("NewPrivateChat"))
                         this.newPrivateChat(message);
-                    else if (message.cmd.Equals("NewPrivateChatOtherSide"))
-                    {
-                        Console.WriteLine("OK1.5");
-                        this.broadcastMessage(message);
-                    }
                         
                     
                     //Reset the timer
@@ -63,10 +58,20 @@ namespace Chat_Server
 
         private void newPrivateChat(Message message)
         {
-            Console.WriteLine("Create new channel:" + message.getArg("channel"));
-            Channel channel = new Channel(null, message.getArg("channel"));
+            Console.WriteLine("Create new channel:" + this.client.ToString());
+            Channel channel = new Channel(null, this.client.Channel.Uri + ": " + this.client.Username + " & " + message.getArg("name"));
             this.channelsList.Add(channel);
-            this.addClientToChannel(message, channel);
+            Client tmpReceiver  = this.client.Channel.getClient(message.getArg("name"));
+            Client sender = new Client(channel);
+            Client receiver = new Client(channel);
+            sender.setCredentials(this.client.Username, this.client.Password);
+            receiver.setCredentials(tmpReceiver.Username, tmpReceiver.Password);
+            channel.addClient(sender);
+            channel.addClient(receiver);
+            
+            Message msg = new Message("NewPrivateChat");
+            msg.addArgument("name", this.client.Username);
+            receiver.Connection.sendMessage(msg);
         }
 
         private void TimeOut(object source, ElapsedEventArgs e)

@@ -81,18 +81,14 @@ namespace Chat_Client
                         this.Invoke((setConnectedClient)setClient, message);
                     else if (message.cmd.Equals("RemoveClient"))
                         this.Invoke((setRemovedClient)removeClient, message);
-                    else if (message.cmd.Equals("NewPrivateChatOtherSide"))
+                    else if (message.cmd.Equals("NewPrivateChat"))
                     {
                         Console.WriteLine("OK2");
-                        if(message.getArg("receiver") == this.client.Username)
-                        {
-                            Console.WriteLine("receiver : " + this.client.Username);
-                            this.clientSelected = null;
-                            this.clientCaller = message.getArg("sender");
-                            CreatePrivateChat(this, new EventArgs());
-                        }
+                        this.clientSelected = null;
+                        this.clientCaller = message.getArg("name");
+                        CreatePrivateChat(this, new EventArgs());
                     }
-                        
+
                     else if (message.cmd.Equals("NewMessage"))
                         if (message.getArg("text") != null)
                             this.Invoke((setNewText)setText, message);
@@ -162,10 +158,10 @@ namespace Chat_Client
             {
                 Image img = Image.FromFile(openFileDialog.FileName);
                 Size size;
-                if(img.Width > img.Height)
-                    size = new Size(50,img.Height * 50 / img.Width);
+                if (img.Width > img.Height)
+                    size = new Size(50, img.Height * 50 / img.Width);
                 else
-                    size = new Size(img.Width * 50 / img.Height,50);
+                    size = new Size(img.Width * 50 / img.Height, 50);
                 Bitmap bitmap = new Bitmap(img, size);
                 String pictureString = Base64ImageConverter.imageToString(bitmap, ImageFormat.Bmp);
                 this.txtBoxDiscussion.AppendText("<Me> \n");
@@ -183,7 +179,7 @@ namespace Chat_Client
             Clipboard.SetImage(bitmap);
             DataFormats.Format format = DataFormats.GetFormat(DataFormats.Bitmap);
             this.txtBoxDiscussion.ReadOnly = false; // Disable read only else it can not paste 
-            this.txtBoxDiscussion.Select(this.txtBoxDiscussion.TextLength,1);
+            this.txtBoxDiscussion.Select(this.txtBoxDiscussion.TextLength, 1);
             this.txtBoxDiscussion.Paste(format);
             this.txtBoxDiscussion.ReadOnly = true;
             this.txtBoxDiscussion.AppendText("\n");
