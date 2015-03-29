@@ -53,7 +53,7 @@ namespace Chat_Library.Controller
             String msg = "";
 
             do
-            {
+                {
                 if (this.isAvailable())
                 {
                     try
@@ -78,17 +78,18 @@ namespace Chat_Library.Controller
             return message;
         }
 
+        // Boolean to know if the Connection is available.
         public bool isAvailable()
         {
             try
-            {
+        {
                 return !(this.socket.Poll(1, SelectMode.SelectRead) && this.socket.Available == 0);
-            }
+        }
             catch (SocketException)
             {
-                return false;
+                    return false;
             }
-        }
+            }
 
         // Disconnects a client.
         public void closeSocket()

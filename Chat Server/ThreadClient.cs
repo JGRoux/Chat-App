@@ -16,6 +16,8 @@ namespace Chat_Server
     {
         private Client client;
         private Connection connection;
+
+        // The list of the client's channels.
         private List<Channel> channelsList;
         private System.Timers.Timer timerOut, timerCheck;
 
@@ -38,6 +40,7 @@ namespace Chat_Server
             this.timerCheck.Enabled = true;
         }
 
+        // The method launched in the thread.
         private void threadClientMethod()
         {
             Message message;
@@ -45,16 +48,17 @@ namespace Chat_Server
             {
                 try
                 {
-                    if ((message = this.connection.getMessage()) != null)
-                    {
-                        if (message.cmd.Equals("Auth"))
-                            this.authClient(message);
-                        else if (message.cmd.Equals("ReqClients"))
-                            this.reqClients();
-                        else if (message.cmd.Equals("Broadcast"))
-                            this.broadcastIncomingMessage(message);
-                        else if (message.cmd.Equals("NewPrivateChat"))
-                            this.newPrivateChat(message);
+                if ((message = this.connection.getMessage()) != null)
+                {
+                    // The available commands.
+                    if (message.cmd.Equals("Auth"))
+                        this.authClient(message);
+                    else if (message.cmd.Equals("ReqClients"))
+                        this.reqClients();
+                    else if (message.cmd.Equals("Broadcast"))
+                        this.broadcastIncomingMessage(message);
+                    else if (message.cmd.Equals("NewPrivateChat"))
+                        this.newPrivateChat(message);
 
 
                         //Reset the timer
@@ -75,7 +79,6 @@ namespace Chat_Server
         {
             Console.WriteLine("Create new private channel:" + this.client.Channel.Uri + ": " + this.client.Username + " & " + message.getArg("name"));
             Channel channel = new Channel(null, this.client.Channel.Uri + ": " + this.client.Username + " & " + message.getArg("name"));
-            Console.WriteLine(channel.Uri);
             this.channelsList.Add(channel);
             Client tmpReceiver = this.client.Channel.getClient(message.getArg("name"));
             Client sender = new Client(channel);

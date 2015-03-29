@@ -17,8 +17,6 @@ namespace Chat_Library.Model
         [DataMember]
         public List<Argument> args { get; set; }
 
-     
-
         public Message()
         {
         }
@@ -28,6 +26,7 @@ namespace Chat_Library.Model
             this.cmd = cmd;
         }
 
+        // A message has several arguments: an argument is known by a name and a content.
         public void addArgument(String name, String content)
         {
             if (this.args == null)
@@ -35,6 +34,7 @@ namespace Chat_Library.Model
             this.args.Add(new Argument(name, content));
         }
 
+        // To get the first content of the argument called by name.
         public String getArg(String name)
         {
             foreach (Argument arg in this.args)
@@ -45,6 +45,7 @@ namespace Chat_Library.Model
             return null;
         }
 
+        // To get the list of contents of the argument called by name.
         public List<String> getArgContents(String name)
         {
             List<String> contentsList = new List<String>();

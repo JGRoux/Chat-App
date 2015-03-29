@@ -10,14 +10,14 @@ namespace Chat_Client.Model
 {
     public class ChatClient
     {
-        public List<Client> clientsList {get; set;}
+        public List<Client> clientsList { get; set; }
 
         public ChatClient()
         {
             this.clientsList = XMLSaver.ReadXml();
         }
 
-         // Add channel to the client.
+        // Add channel to the client.
         public void addClient(String name, String uri)
         {
             this.clientsList.Add(new Client(new Channel(name, uri)));
