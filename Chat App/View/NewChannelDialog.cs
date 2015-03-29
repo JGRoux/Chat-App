@@ -21,7 +21,8 @@ namespace Chat_Client.View
             toolTip1.AutoPopDelay = 10000;
         }
 
-        public TextBox getTxtBoxChannelName(){
+        public TextBox getTxtBoxChannelName()
+        {
             return this.txtBoxChannelName;
         }
 

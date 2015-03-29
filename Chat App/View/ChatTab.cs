@@ -43,7 +43,7 @@ namespace Chat_Client
 
         private void listboxContextMenu_Opening(object sender, CancelEventArgs e)
         {
-            // Clear the menu and add custom items.
+            // Clears the menu and add custom items.
             this.listboxContextMenu.Items.Clear();
             if (this.listBoxUsers.SelectedIndex != -1)
             {
@@ -70,7 +70,7 @@ namespace Chat_Client
             this.client.Connection.sendMessage(message);
         }
 
-        // Threaded method to continuously listen to receive message
+        // Threaded method to continuously listen to receive message.
         private void getMessages()
         {
             Chat_Library.Model.Message message;
@@ -112,7 +112,7 @@ namespace Chat_Client
             CreatePrivateChat(this, new EventArgs());
         }
 
-        // Set the whole clients connected list
+        // Sets the whole clients connected list.
         private void setClientList(Chat_Library.Model.Message message)
         {
             int i = 0;
@@ -124,21 +124,21 @@ namespace Chat_Client
             this.txtBoxDiscussion.AppendText("There are currently " + i.ToString() + " users connected\n");
         }
 
-        // Add a client to the connected client list
+        // Adds a client to the connected client list.
         private void setClient(Chat_Library.Model.Message message)
         {
             this.listBoxUsers.Items.Add(message.getArg("name"));
             this.txtBoxDiscussion.AppendText("Client " + message.getArg("name") + " is now connected\n");
         }
 
-        // Remove a client to the connected client list
+        // Removes a client to the connected client list.
         private void removeClient(Chat_Library.Model.Message message)
         {
             this.listBoxUsers.Items.Remove(message.getArg("name"));
             this.txtBoxDiscussion.AppendText("Client " + message.getArg("name") + " has disconnected\n");
         }
 
-        // Set received text into the txtboxdiscussion
+        // Sets received text into the txtboxdiscussion.
         private void setText(Chat_Library.Model.Message message)
         {
             if (message.getArg("name") != null)
@@ -148,7 +148,7 @@ namespace Chat_Client
                     this.txtBoxDiscussion.AppendText(text + "\n");
         }
 
-        // Set received picture into the txtboxdiscussion
+        // Sets received picture into the txtboxdiscussion.
         private void setPicture(Chat_Library.Model.Message message)
         {
             this.txtBoxDiscussion.AppendText("<" + message.getArg("name") + "> \n");
@@ -156,7 +156,7 @@ namespace Chat_Client
             this.displayBitmap(bitmap);
         }
 
-        // Ask to open picture and send it to broadcast
+        // Asks to open picture and send it to broadcast.
         private void pictureButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -180,7 +180,7 @@ namespace Chat_Client
             }
         }
 
-        // Display bitmap in the txtboxdiscussion
+        // Displays bitmap in the txtboxdiscussion.
         private void displayBitmap(Bitmap bitmap)
         {
             Clipboard.Clear();
@@ -193,23 +193,25 @@ namespace Chat_Client
             this.txtBoxDiscussion.AppendText("\n");
         }
 
-        // Send message on send button click
+        // Sends message on send button click.
         private void btnSend_Click(object sender, EventArgs e)
         {
             this.sendMessage();
         }
 
-        // Send message on key entered press
+        // Sends message on key entered press.
         private void txtBoxMessage_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 this.sendMessage();
-                e.Handled = e.SuppressKeyPress = true; // Allow to suppress the 'ding' sound
+
+                // Allows to delete the 'ding' sound.
+                e.Handled = e.SuppressKeyPress = true; 
             }
         }
 
-        // Send message in txtboxmessage to broadcast
+        // Sends a message in txtBoxMessage to broadcast.
         private void sendMessage()
         {
             if (!this.txtBoxMessage.Text.Equals(""))
@@ -222,13 +224,13 @@ namespace Chat_Client
             }
         }
 
-        // Does not allow the txtboxdiscussion to get the focus
+        // Does not allow the txtBoxDiscussion to get the focus.
         private void txtBoxDiscussion_MouseDown(object sender, MouseEventArgs e)
         {
             this.txtBoxMessage.Focus();
         }
 
-        // Open URL link in the default webbrowser
+        // Open URL link in the default web browser.
         private void txtBoxDiscussion_LinkClicked(object sender, LinkClickedEventArgs e)
         {
             System.Diagnostics.Process.Start(e.LinkText);

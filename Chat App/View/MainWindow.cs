@@ -84,7 +84,7 @@ namespace Chat_Client
             }
         }
 
-        // Remove a tab when clicking on close area.
+        // Removes a tab when clicking on close area.
         private void tabControl_MouseDown(object sender, MouseEventArgs e)
         {
             if (this.isOnCloseArea(e))
@@ -115,7 +115,7 @@ namespace Chat_Client
             tab.connect += createConnection;
         }
 
-        // Launch new channel connection when clicking on button Connect.
+        // Launches new channel connection when clicking on button Connect.
         private void createConnection(object sender, EventArgs e)
         {
             ConnectionTab tab = (ConnectionTab)sender;
@@ -172,59 +172,49 @@ namespace Chat_Client
         {
             var chatTabCaller = sender as ChatTab;
 
-            //try
+            Client oldClient = null;
+            String channelURI;
+            String[] Uri;
+
+            if (chatTabCaller.clientSelected != null)
             {
-                Client oldClient = null;
-                String channelURI;
-                String[] Uri;
-
-                if (chatTabCaller.clientSelected != null)
-                {
-                    foreach (Client client in this.chatClient.clientsList)
-                        if (client.Username.Equals(chatTabCaller.clientSelected))
-                            oldClient = client;
-                    Uri = oldClient.Channel.Uri.Split('/');
-                    channelURI = Uri[1] + ": " + chatTabCaller.client.Username + " & " + chatTabCaller.clientSelected;
-                }
-                else
-                {
-                    oldClient = chatTabCaller.client;
-                    Uri = oldClient.Channel.Uri.Split('/');
-                    channelURI = Uri[1] + ": " + chatTabCaller.clientCaller + " & " + chatTabCaller.client.Username;
-                }
-                Client newClient = new Client(oldClient.Channel);
-                newClient.Channel.Uri = channelURI;
-                newClient.Username = oldClient.Username;
-                newClient.Password = oldClient.Password;
-                newClient.Connection = new Connection(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-                
-                newClient.Connection.connect(Uri[0], 8000);
-
-                Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
-                message.addArgument("channel", newClient.Channel.Uri);
-                message.addArgument("username", newClient.Username);
-                message.addArgument("password", newClient.Password);
-                newClient.Connection.sendMessage(message);
-                if (newClient.Connection.getMessage().cmd.Equals("Connected"))
-                {
-                    ChatTab chatTab = new ChatTab(newClient);
-                    chatTab.Dock = System.Windows.Forms.DockStyle.Fill;
-
-                    this.tabControl.TabPages.Insert(this.tabControl.TabPages.Count - 1, newClient.Channel.Uri + "     ");
-                    this.tabControl.SelectedIndex = this.tabControl.TabPages.Count - 2;
-                    this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(chatTab);
-
-                    chatTab.CreatePrivateChat += chatTab_CreatePrivateChat;
-                }
+                foreach (Client client in this.chatClient.clientsList)
+                    if (client.Username.Equals(chatTabCaller.clientSelected))
+                        oldClient = client;
+                Uri = oldClient.Channel.Uri.Split('/');
+                channelURI = Uri[1] + ": " + chatTabCaller.client.Username + " & " + chatTabCaller.clientSelected;
             }
-            //catch (Exception exception)
+            else
             {
-                //MessageBox.Show("Impossible to establish connection to server !");
-                //Console.WriteLine(exception.ToString());
+                oldClient = chatTabCaller.client;
+                Uri = oldClient.Channel.Uri.Split('/');
+                channelURI = Uri[1] + ": " + chatTabCaller.clientCaller + " & " + chatTabCaller.client.Username;
             }
+            Client newClient = new Client(oldClient.Channel);
+            newClient.Channel.Uri = channelURI;
+            newClient.Username = oldClient.Username;
+            newClient.Password = oldClient.Password;
+            newClient.Connection = new Connection(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
+            newClient.Connection.connect(Uri[0], 8000);
+
+            Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
+            message.addArgument("channel", newClient.Channel.Uri);
+            message.addArgument("username", newClient.Username);
+            message.addArgument("password", newClient.Password);
+            newClient.Connection.sendMessage(message);
+            if (newClient.Connection.getMessage().cmd.Equals("Connected"))
+            {
+                ChatTab chatTab = new ChatTab(newClient);
+                chatTab.Dock = System.Windows.Forms.DockStyle.Fill;
+
+                this.tabControl.TabPages.Insert(this.tabControl.TabPages.Count - 1, newClient.Channel.Uri + "     ");
+                this.tabControl.SelectedIndex = this.tabControl.TabPages.Count - 2;
+                this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(chatTab);
+
+                chatTab.CreatePrivateChat += chatTab_CreatePrivateChat;
+            }
         }
-
     }
 }
 
