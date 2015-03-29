@@ -51,8 +51,8 @@ namespace Chat_Server
                     //Reset the timer
                     this.timer.Stop();
                     this.timer.Start();
+                }
             }
-        }
         }
 
         private void newPrivateChat(Message message)
@@ -82,6 +82,7 @@ namespace Chat_Server
                 {
                     // If channel exist we test the password
                     this.checkCredentials(message, channel);
+
                     return;
                 }
 

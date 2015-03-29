@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.comboBoxChannels = new System.Windows.Forms.ComboBox();
             this.mainPanel = new System.Windows.Forms.Panel();
             this.btnAddChannel = new System.Windows.Forms.Button();
@@ -36,7 +37,11 @@
             this.txtBoxPwd = new System.Windows.Forms.TextBox();
             this.txtBoxUsername = new System.Windows.Forms.TextBox();
             this.btnConnect = new System.Windows.Forms.Button();
+            this.channelLabel = new System.Windows.Forms.Label();
+            this.pictureBoxChannelUriHelp = new System.Windows.Forms.PictureBox();
+            this.channelToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.mainPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxChannelUriHelp)).BeginInit();
             this.SuspendLayout();
             // 
             // comboBoxChannels
@@ -46,15 +51,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxChannels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxChannels.FormattingEnabled = true;
-            this.comboBoxChannels.Location = new System.Drawing.Point(92, 78);
+            this.comboBoxChannels.Location = new System.Drawing.Point(122, 78);
             this.comboBoxChannels.Name = "comboBoxChannels";
-            this.comboBoxChannels.Size = new System.Drawing.Size(196, 21);
+            this.comboBoxChannels.Size = new System.Drawing.Size(132, 21);
             this.comboBoxChannels.Sorted = true;
             this.comboBoxChannels.TabIndex = 0;
             this.comboBoxChannels.SelectedIndexChanged += new System.EventHandler(this.comboBoxChannels_SelectedIndexChanged);
             // 
             // mainPanel
             // 
+            this.mainPanel.Controls.Add(this.pictureBoxChannelUriHelp);
+            this.mainPanel.Controls.Add(this.channelLabel);
             this.mainPanel.Controls.Add(this.btnAddChannel);
             this.mainPanel.Controls.Add(this.lblPwd);
             this.mainPanel.Controls.Add(this.lblUsername);
@@ -70,10 +77,11 @@
             // 
             // btnAddChannel
             // 
+            this.btnAddChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAddChannel.BackgroundImage = global::Chat_Client.Properties.Resources.icon_add;
             this.btnAddChannel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnAddChannel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnAddChannel.Location = new System.Drawing.Point(58, 76);
+            this.btnAddChannel.Location = new System.Drawing.Point(260, 78);
             this.btnAddChannel.Name = "btnAddChannel";
             this.btnAddChannel.Size = new System.Drawing.Size(28, 23);
             this.btnAddChannel.TabIndex = 6;
@@ -130,6 +138,29 @@
             this.btnConnect.UseVisualStyleBackColor = true;
             this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
             // 
+            // channelLabel
+            // 
+            this.channelLabel.AutoSize = true;
+            this.channelLabel.Location = new System.Drawing.Point(57, 81);
+            this.channelLabel.Name = "channelLabel";
+            this.channelLabel.Size = new System.Drawing.Size(55, 13);
+            this.channelLabel.TabIndex = 7;
+            this.channelLabel.Text = "Channel : ";
+            // 
+            // pictureBoxChannelUriHelp
+            // 
+            this.pictureBoxChannelUriHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxChannelUriHelp.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pictureBoxChannelUriHelp.Image = global::Chat_Client.Properties.Resources.icon_info;
+            this.pictureBoxChannelUriHelp.Location = new System.Drawing.Point(294, 79);
+            this.pictureBoxChannelUriHelp.Name = "pictureBoxChannelUriHelp";
+            this.pictureBoxChannelUriHelp.Size = new System.Drawing.Size(20, 20);
+            this.pictureBoxChannelUriHelp.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxChannelUriHelp.TabIndex = 8;
+            this.pictureBoxChannelUriHelp.TabStop = false;
+            this.channelToolTip.SetToolTip(this.pictureBoxChannelUriHelp, "Choose a preexisting channel or Add one with the \'+\' buton");
+            this.pictureBoxChannelUriHelp.Click += new System.EventHandler(this.pictureBoxChannelUriHelp_Click);
+            // 
             // ConnectionTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -139,6 +170,7 @@
             this.Size = new System.Drawing.Size(353, 321);
             this.mainPanel.ResumeLayout(false);
             this.mainPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxChannelUriHelp)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -153,5 +185,8 @@
         private System.Windows.Forms.TextBox txtBoxPwd;
         private System.Windows.Forms.TextBox txtBoxUsername;
         private System.Windows.Forms.Button btnAddChannel;
+        private System.Windows.Forms.Label channelLabel;
+        private System.Windows.Forms.PictureBox pictureBoxChannelUriHelp;
+        private System.Windows.Forms.ToolTip channelToolTip;
     }
 }

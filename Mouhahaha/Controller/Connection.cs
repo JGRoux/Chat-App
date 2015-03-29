@@ -53,14 +53,23 @@ namespace Chat_Library.Controller
             String msg = "";
 
             do
-                {
+               {
                     try
                     {
-                    if (this.socket.Available > 0)
-                    {
-                        this.socket.Receive(buffer, 1, SocketFlags.None);
-                        msg += Encoding.UTF8.GetString(buffer);
-                    }
+                        //Test the socket connection
+                        if (this.isAvailable())
+                        {
+                            if (this.socket.Available > 0)
+                            {
+                                this.socket.Receive(buffer, 1, SocketFlags.None);
+                                msg += Encoding.UTF8.GetString(buffer);
+                            }
+                        }
+                        else
+                        {
+                            //If the socket is deconnected, we get out of the thread
+                            //msg = delimiter;
+                        }
                     }
                     catch (Exception e)
                     {
@@ -95,7 +104,6 @@ namespace Chat_Library.Controller
             //If the send is a success, the socket is connected
             byte[] buffer = new Byte[0];
 
-            
             try
             {
                 int result = this.socket.Send(buffer);
@@ -115,9 +123,6 @@ namespace Chat_Library.Controller
                 return true;
             }
             return true;
-         
-            //   return this.socket.Poll(10, SelectMode.SelectRead) && (this.socket.Available == 0) ;
-	   
         }
     }
 }

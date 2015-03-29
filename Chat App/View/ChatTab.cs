@@ -98,13 +98,16 @@ namespace Chat_Client
         // Set the whole clients connected list
         private void setClientList(Chat_Library.Model.Message message)
         {
-            int i = 0;
+            int i = 1;
             foreach (String name in message.getArgContents("name"))
             {
                 this.listBoxUsers.Items.Add(name);
                 i++;
             }
-            this.txtBoxDiscussion.Text += "There are currently " + i.ToString() + " users connected" + Environment.NewLine;
+            if(i == 1)
+                this.txtBoxDiscussion.Text += "There are currently " + i.ToString() + " user connected" + Environment.NewLine;
+            else
+                this.txtBoxDiscussion.Text += "There are currently " + i.ToString() + " users connected" + Environment.NewLine;
         }
 
         // Add a client to the connected client list
