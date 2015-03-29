@@ -37,7 +37,9 @@ namespace Chat_Client
             this.listboxContextMenu.ItemClicked += new ToolStripItemClickedEventHandler(listboxContextMenu_ItemClicked);
             this.listBoxUsers.ContextMenuStrip = listboxContextMenu;
 
-            new Thread(this.getMessages).Start();
+            Thread thread = new Thread(this.getMessages);
+            thread.IsBackground = true;
+            thread.Start();
             this.getConnectedClients();
         }
 
@@ -74,7 +76,7 @@ namespace Chat_Client
         private void getMessages()
         {
             Chat_Library.Model.Message message;
-            while (true)
+            while (this.client.Connection.isAvailable())
             {
                 if ((message = this.client.Connection.getMessage()) != null)
                 {
@@ -234,9 +236,15 @@ namespace Chat_Client
             System.Diagnostics.Process.Start(e.LinkText);
         }
 
+        // Open clicked link on webbrowser
         private void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)
         {
             System.Diagnostics.Process.Start(e.LinkText);
+        }
+
+        public void closeConnection()
+        {
+            this.client.Connection.closeSocket();
         }
     }
 }

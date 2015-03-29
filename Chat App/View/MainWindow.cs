@@ -88,7 +88,11 @@ namespace Chat_Client
         private void tabControl_MouseDown(object sender, MouseEventArgs e)
         {
             if (this.isOnCloseArea(e))
+            {
+                if (this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls[0].GetType() == typeof(ChatTab))
+                    ((ChatTab)this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls[0]).closeConnection();
                 this.tabControl.TabPages.RemoveAt(this.tabControl.SelectedIndex);
+            }
         }
 
         private bool isOnCloseArea(MouseEventArgs e)
@@ -197,7 +201,7 @@ namespace Chat_Client
                 newClient.Username = oldClient.Username;
                 newClient.Password = oldClient.Password;
                 newClient.Connection = new Connection(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-                
+
                 newClient.Connection.connect(Uri[0], 8000);
 
                 Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
