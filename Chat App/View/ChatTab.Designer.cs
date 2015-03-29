@@ -74,6 +74,7 @@
             this.txtBoxDiscussion.Size = new System.Drawing.Size(250, 338);
             this.txtBoxDiscussion.TabIndex = 0;
             this.txtBoxDiscussion.Text = "";
+            this.txtBoxDiscussion.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.txtBoxDiscussion_LinkClicked);
             this.txtBoxDiscussion.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtBoxDiscussion_MouseDown);
             // 
             // listBoxUsers

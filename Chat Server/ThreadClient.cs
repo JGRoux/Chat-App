@@ -73,6 +73,11 @@ namespace Chat_Server
         {
             this.broadcastClientDisconnected();
             connection.closeSocket();
+            foreach (Channel channel in channelsList)
+            {
+                channel.getClientsList().Remove(client);
+        }
+
         }
 
         // Authentification du client
@@ -185,7 +190,7 @@ namespace Chat_Server
         private void broadcastMessage(Message message)
         {
             foreach (Client client in this.client.Channel.getClientsList())
-                if (client != this.client)
+                if(client != this.client)
                     client.Connection.sendMessage(message);
         }
     }

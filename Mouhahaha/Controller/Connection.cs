@@ -53,19 +53,19 @@ namespace Chat_Library.Controller
             String msg = "";
 
             do
-            {
-                try
                 {
+                    try
+                    {
                     if (this.socket.Available > 0)
                     {
                         this.socket.Receive(buffer, 1, SocketFlags.None);
                         msg += Encoding.UTF8.GetString(buffer);
                     }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("erreur:" + e.ToString());
-                }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("erreur:" + e.ToString());
+                    }
                 Thread.Sleep(1);
             } while (!msg.Contains(delimiter));
 
@@ -90,15 +90,12 @@ namespace Chat_Library.Controller
         //Test if the socket is deconnected
         public bool isDeconnected()
         {
-            //ancez un appel Send non bloquant de zéro octet. Si l'appel est
-            //retourné avec succès ou lève un code d'erreur WAEWOULDBLOCK (10035), 
-            //le socket est toujours connecté ; sinon, le socket n'est plus connecté.
-
+            
             //We make a Send call with 0 bytes
             //If the send is a success, the socket is connected
             byte[] buffer = new Byte[0];
 
-
+            
             try
             {
                 int result = this.socket.Send(buffer);
@@ -118,9 +115,9 @@ namespace Chat_Library.Controller
                 return true;
             }
             return true;
-
+         
             //   return this.socket.Poll(10, SelectMode.SelectRead) && (this.socket.Available == 0) ;
-
+	   
         }
     }
 }

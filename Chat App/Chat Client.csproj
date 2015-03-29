@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller\Base64ImageConverter.cs" />
     <Compile Include="Controller\XMLSaver.cs" />
     <Compile Include="Model\ChatClient.cs" />
     <Compile Include="View\ConnectionTab.cs">

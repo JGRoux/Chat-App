@@ -63,16 +63,6 @@ namespace Chat_Client.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ic_info_outline_48px_48 {
-            get {
-                object obj = ResourceManager.GetObject("ic_info_outline_48px-48", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap icon_add {
             get {
                 object obj = ResourceManager.GetObject("icon_add", resourceCulture);
@@ -86,6 +76,16 @@ namespace Chat_Client.Properties {
         internal static System.Drawing.Bitmap icon_close {
             get {
                 object obj = ResourceManager.GetObject("icon_close", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icon_info {
+            get {
+                object obj = ResourceManager.GetObject("icon_info", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
