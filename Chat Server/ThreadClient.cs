@@ -24,8 +24,8 @@ namespace Chat_Server
             this.connection = connection;
             this.channelsList = channelsList;
             Thread newThreadClient = new Thread(threadClientMethod);
-            newThreadClient.Start();            
-
+            newThreadClient.Start();
+            
             this.timer = new System.Timers.Timer();
             this.timer.Elapsed += new ElapsedEventHandler(TimeOut);
             this.timer.Interval = 1000000;
@@ -47,12 +47,12 @@ namespace Chat_Server
                         this.broadcastIncomingMessage(message);
                     else if (message.cmd.Equals("NewPrivateChat"))
                         this.newPrivateChat(message);
-                    
+
                     //Reset the timer
                     this.timer.Stop();
                     this.timer.Start();
-                }
             }
+        }
         }
 
         private void newPrivateChat(Message message)
@@ -67,6 +67,11 @@ namespace Chat_Server
         {
             this.broadcastClientDisconnected();
             connection.closeSocket();
+            foreach (Channel channel in channelsList)
+            {
+                channel.getClientsList().Remove(client);
+            }
+
         }
 
         // Authentification du client
@@ -161,11 +166,11 @@ namespace Chat_Server
 
         // Broadcats that the client has disconnected
         private void broadcastClientDisconnected()
-        {
+                {
             Message message = new Message("RemoveClient");
             message.addArgument("name", this.client.Username);
             this.broadcastMessage(message);
-        }
+                }
 
         // Transform incoming message to broadcast it
         private void broadcastIncomingMessage(Message message)
@@ -179,7 +184,7 @@ namespace Chat_Server
         private void broadcastMessage(Message message)
         {
             foreach (Client client in this.client.Channel.getClientsList())
-                if (client != this.client)
+                if(client != this.client)
                     client.Connection.sendMessage(message);
         }
     }

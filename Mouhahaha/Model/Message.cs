@@ -8,12 +8,13 @@ using System.Runtime.Serialization;
 namespace Chat_Library.Model
 {
     [DataContract]
+    [Serializable]
     public class Message
     {
         [DataMember(Name = "cmd")]
         public String cmd { get; set; }
 
-        [DataMember(Name = "args")]
+        [DataMember]
         public List<Argument> args { get; set; }
 
      

@@ -216,5 +216,10 @@ namespace Chat_Client
         {
             System.Diagnostics.Process.Start(e.LinkText);
         }
+
+        private void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(e.LinkText);
+        }
     }
 }
