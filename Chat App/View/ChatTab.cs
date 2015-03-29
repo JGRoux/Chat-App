@@ -22,7 +22,8 @@ namespace Chat_Client
         private ContextMenuStrip listboxContextMenu;
 
         public Client client { get; set; }
-        public Client clientSelected { get; set; }
+        public String clientSelected { get; set; }
+        public String clientCaller { get; set; }
 
         public EventHandler CreatePrivateChat;
 
@@ -47,7 +48,7 @@ namespace Chat_Client
             if (this.listBoxUsers.SelectedIndex != -1)
             {
                 this.listboxContextMenu.Items.Add("Start private chat");
-                clientSelected = this.client.Channel.getClient(listBoxUsers.SelectedItem.ToString());
+                this.clientSelected = this.listBoxUsers.SelectedItem.ToString();
             }
         }
 
@@ -56,6 +57,9 @@ namespace Chat_Client
             this.listboxContextMenu.Hide();
             if (e.ClickedItem.ToString().Equals("Start private chat"))
             {
+                Chat_Library.Model.Message message = new Chat_Library.Model.Message("NewPrivateChat");
+                message.addArgument("name", this.clientSelected);
+                client.Connection.sendMessage(message);
                 CreatePrivateChat(this, e);
             }
         }
@@ -80,6 +84,13 @@ namespace Chat_Client
                         this.Invoke((setConnectedClient)setClient, message);
                     else if (message.cmd.Equals("RemoveClient"))
                         this.Invoke((setRemovedClient)removeClient, message);
+                    else if (message.cmd.Equals("NewPrivateChat"))
+                    {
+                        this.clientSelected = null;
+                        this.clientCaller = message.getArg("name");
+                        this.Invoke((setNewPrivateChat)newPrivateChat);
+                    }
+
                     else if (message.cmd.Equals("NewMessage"))
                         if (message.getArg("text") != null)
                             this.Invoke((setNewText)setText, message);
@@ -94,6 +105,12 @@ namespace Chat_Client
         private delegate void setRemovedClient(Chat_Library.Model.Message message);
         private delegate void setNewText(Chat_Library.Model.Message message);
         private delegate void setNewPicture(Chat_Library.Model.Message message);
+        private delegate void setNewPrivateChat();
+
+        private void newPrivateChat()
+        {
+            CreatePrivateChat(this, new EventArgs());
+        }
 
         // Set the whole clients connected list
         private void setClientList(Chat_Library.Model.Message message)
@@ -114,40 +131,35 @@ namespace Chat_Client
         private void setClient(Chat_Library.Model.Message message)
         {
             this.listBoxUsers.Items.Add(message.getArg("name"));
-            this.txtBoxDiscussion.Text += "Client " + message.getArg("name") + " is now connected" + Environment.NewLine;
+            this.txtBoxDiscussion.AppendText("Client " + message.getArg("name") + " is now connected\n");
         }
 
         // Remove a client to the connected client list
         private void removeClient(Chat_Library.Model.Message message)
         {
             this.listBoxUsers.Items.Remove(message.getArg("name"));
-            this.txtBoxDiscussion.Text += "Client " + message.getArg("name") + " has disconnected" + Environment.NewLine;
+            this.txtBoxDiscussion.AppendText("Client " + message.getArg("name") + " has disconnected\n");
         }
 
         // Set received text into the txtboxdiscussion
         private void setText(Chat_Library.Model.Message message)
         {
             if (message.getArg("name") != null)
-                this.txtBoxDiscussion.Text += "<" + message.getArg("name") + "> " + message.getArg("text") + Environment.NewLine;
+                this.txtBoxDiscussion.AppendText("<" + message.getArg("name") + "> " + message.getArg("text") + "\n");
             else
                 foreach (String text in message.getArgContents("text"))
-                    this.txtBoxDiscussion.Text += text + Environment.NewLine;
+                    this.txtBoxDiscussion.AppendText(text + "\n");
         }
 
         // Set received picture into the txtboxdiscussion
         private void setPicture(Chat_Library.Model.Message message)
         {
-            /*if (message.getArg("name") != null)
-                this.txtBoxDiscussion.Text += message.getArg("name") + ": " + message.getArg("picture") + Environment.NewLine;
-            else
-                foreach (String text in message.getArgContents("text"))
-                    this.txtBoxDiscussion.Text += text + Environment.NewLine;*/
-            Bitmap bitmap = (Bitmap)Base64ImageConverter.stringToImage(message.getArg("picture"));
-            Clipboard.SetDataObject(bitmap);
-            DataFormats.Format format = DataFormats.GetFormat(DataFormats.Bitmap);
-            this.txtBoxDiscussion.Paste(format);
+            this.txtBoxDiscussion.AppendText("<" + message.getArg("name") + "> \n");
+            Bitmap bitmap = new Bitmap(Base64ImageConverter.stringToImage(message.getArg("picture")));
+            this.displayBitmap(bitmap);
         }
 
+        // Ask to open picture and send it to broadcast
         private void pictureButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -156,11 +168,32 @@ namespace Chat_Client
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 Image img = Image.FromFile(openFileDialog.FileName);
-                String pictureString = Base64ImageConverter.imageToString(new Bitmap(img, new Size(50,50)), img.RawFormat);
+                Size size;
+                if (img.Width > img.Height)
+                    size = new Size(50, img.Height * 50 / img.Width);
+                else
+                    size = new Size(img.Width * 50 / img.Height, 50);
+                Bitmap bitmap = new Bitmap(img, size);
+                String pictureString = Base64ImageConverter.imageToString(bitmap, ImageFormat.Bmp);
+                this.txtBoxDiscussion.AppendText("<Me> \n");
+                this.displayBitmap(bitmap);
                 Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
                 message.addArgument("picture", pictureString);
                 client.Connection.sendMessage(message);
             }
+        }
+
+        // Display bitmap in the txtboxdiscussion
+        private void displayBitmap(Bitmap bitmap)
+        {
+            Clipboard.Clear();
+            Clipboard.SetImage(bitmap);
+            DataFormats.Format format = DataFormats.GetFormat(DataFormats.Bitmap);
+            this.txtBoxDiscussion.ReadOnly = false; // Disable read only else it can not paste 
+            this.txtBoxDiscussion.Select(this.txtBoxDiscussion.TextLength, 1);
+            this.txtBoxDiscussion.Paste(format);
+            this.txtBoxDiscussion.ReadOnly = true;
+            this.txtBoxDiscussion.AppendText("\n");
         }
 
         // Send message on send button click
@@ -187,16 +220,18 @@ namespace Chat_Client
                 Chat_Library.Model.Message message = new Chat_Library.Model.Message("Broadcast");
                 message.addArgument("text", this.txtBoxMessage.Text);
                 client.Connection.sendMessage(message);
-                this.txtBoxDiscussion.Text += "<Me> " + this.txtBoxMessage.Text + Environment.NewLine;
+                this.txtBoxDiscussion.AppendText("<Me> " + this.txtBoxMessage.Text + "\n");
                 this.txtBoxMessage.Text = "";
             }
         }
 
+        // Does not allow the txtboxdiscussion to get the focus
         private void txtBoxDiscussion_MouseDown(object sender, MouseEventArgs e)
         {
             this.txtBoxMessage.Focus();
         }
 
+        // Open URL link in the default webbrowser
         private void txtBoxDiscussion_LinkClicked(object sender, LinkClickedEventArgs e)
         {
             System.Diagnostics.Process.Start(e.LinkText);
