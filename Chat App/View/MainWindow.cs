@@ -75,14 +75,14 @@ namespace Chat_Client
         }
 
         // Visual effect on close area of the tab when mouse is hover.
-        private void tabControl_MouseMove(object sender, MouseEventArgs e)
+        /*private void tabControl_MouseMove(object sender, MouseEventArgs e)
         {
             if (this.isOnCloseArea(e))
             {
                 //this.Refresh();
                 //TODO
             }
-        }
+        }*/
 
         // Removes a tab when clicking on close area.
         private void tabControl_MouseDown(object sender, MouseEventArgs e)
@@ -92,9 +92,10 @@ namespace Chat_Client
                 if (this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls[0].GetType() == typeof(ChatTab))
                     ((ChatTab)this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls[0]).closeConnection();
                 this.tabControl.TabPages.RemoveAt(this.tabControl.SelectedIndex);
-        }
+            }
         }
 
+        // If mouse is hover the close tab button
         private bool isOnCloseArea(MouseEventArgs e)
         {
             RectangleF tabTextArea = (RectangleF)this.tabControl.GetTabRect(this.tabControl.SelectedIndex);
@@ -167,16 +168,22 @@ namespace Chat_Client
             }
         }
 
-        private void channelAlreadyOpen()
+        // Check if channel with URI is open in a tab
+        private bool channelAlreadyOpen(String URI)
         {
-
+            for (int i = 0; i < this.tabControl.TabCount; i++)
+                if (this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls[0].GetType() == typeof(ChatTab))
+                    if (((ChatTab)this.tabControl.TabPages[i].Controls[0]).client.Channel.Uri.Equals(URI))
+                        return true;
+            return false;
         }
 
+        // Start private chat with selected client
         private void chatTab_CreatePrivateChat(object sender, EventArgs e)
         {
             var chatTabCaller = sender as ChatTab;
 
-            //try
+            try
             {
                 Client oldClient = null;
                 String channelURI;
@@ -201,7 +208,7 @@ namespace Chat_Client
                 newClient.Username = oldClient.Username;
                 newClient.Password = oldClient.Password;
                 newClient.Connection = new Connection(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-                
+
                 newClient.Connection.connect(Uri[0], 8000);
 
                 Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
@@ -221,12 +228,11 @@ namespace Chat_Client
                     chatTab.CreatePrivateChat += chatTab_CreatePrivateChat;
                 }
             }
-            //catch (Exception exception)
+            catch (Exception exception)
             {
-                //MessageBox.Show("Impossible to establish connection to server !");
-                //Console.WriteLine(exception.ToString());
+                MessageBox.Show("Impossible to establish connection to server !");
+                Console.WriteLine(exception.ToString());
             }
-
         }
     }
 }

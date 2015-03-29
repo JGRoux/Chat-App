@@ -54,20 +54,15 @@ namespace Chat_Library.Controller
 
             do
             {
-                if (this.isAvailable())
+                try
                 {
-                    try
-                    {
-                        this.socket.Receive(buffer, 1, SocketFlags.None);
-                        msg += Encoding.UTF8.GetString(buffer);
-                    }
-                    catch (SocketException e)
-                    {
-                        throw new SocketException();
-                    }
+                    this.socket.Receive(buffer, 1, SocketFlags.None);
+                    msg += Encoding.UTF8.GetString(buffer);
                 }
-                else
+                catch (SocketException)
+                {
                     throw new SocketException();
+                }
                 Thread.Sleep(1);
             } while (!msg.Contains(delimiter));
 
@@ -85,7 +80,7 @@ namespace Chat_Library.Controller
             {
                 return !(this.socket.Poll(1, SelectMode.SelectRead) && this.socket.Available == 0);
             }
-            catch (SocketException)
+            catch (Exception)
             {
                 return false;
             }
