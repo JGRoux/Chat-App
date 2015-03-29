@@ -16,29 +16,41 @@ namespace Chat_Server
     {
         private Client client;
         private Connection connection;
+
+        // The list of the client's channels.
         private List<Channel> channelsList;
-        private System.Timers.Timer timer;
+        private System.Timers.Timer timerOut, timerCheck;
 
         public ThreadClient(Connection connection, List<Channel> channelsList)
         {
             this.connection = connection;
             this.channelsList = channelsList;
             Thread newThreadClient = new Thread(threadClientMethod);
+            newThreadClient.IsBackground = true;
             newThreadClient.Start();
 
-            this.timer = new System.Timers.Timer();
-            this.timer.Elapsed += new ElapsedEventHandler(TimeOut);
-            this.timer.Interval = 1000000;
-            this.timer.Enabled = true;
+            this.timerOut = new System.Timers.Timer();
+            this.timerOut.Elapsed += new ElapsedEventHandler(TimeOut);
+            this.timerOut.Interval = 300000; // 5min
+            this.timerOut.Enabled = true;
+
+            this.timerCheck = new System.Timers.Timer();
+            this.timerCheck.Elapsed += new ElapsedEventHandler(checkConnection);
+            this.timerCheck.Interval = 2000; // 2sec
+            this.timerCheck.Enabled = true;
         }
 
+        // The method launched in the thread.
         private void threadClientMethod()
         {
             Message message;
-            while (this.connection.isAvailable())
+            while (true)
             {
+                try
+                {
                 if ((message = this.connection.getMessage()) != null)
                 {
+                    // The available commands.
                     if (message.cmd.Equals("Auth"))
                         this.authClient(message);
                     else if (message.cmd.Equals("ReqClients"))
@@ -49,10 +61,17 @@ namespace Chat_Server
                         this.newPrivateChat(message);
 
 
-                    //Reset the timer
-                    this.timer.Stop();
-                    this.timer.Start();
+                        //Reset the timer
+                        this.timerOut.Stop();
+                        this.timerOut.Start();
+                    }
                 }
+                catch (SocketException e)
+                {
+                    this.closeConnection();
+                    return;
+                }
+                Console.WriteLine("loop");
             }
         }
 
@@ -74,7 +93,18 @@ namespace Chat_Server
             tmpReceiver.Connection.sendMessage(msg);
         }
 
+        private void checkConnection(object source, ElapsedEventArgs e)
+        {
+            if (!this.connection.isAvailable())
+                this.closeConnection();
+        }
+
         private void TimeOut(object source, ElapsedEventArgs e)
+        {
+            this.closeConnection();
+        }
+
+        private void closeConnection()
         {
             this.client.isConnected = false;
             this.broadcastClientDisconnected();
@@ -192,7 +222,7 @@ namespace Chat_Server
         private void broadcastMessage(Message message)
         {
             foreach (Client client in this.client.Channel.getClientsList())
-                if (client != this.client && client.Connection != null)
+                if (client != this.client)
                     client.Connection.sendMessage(message);
         }
     }

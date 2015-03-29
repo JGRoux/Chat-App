@@ -38,13 +38,13 @@ namespace Chat_Client.View
             return this.txtBoxPwd;
         }
 
-        // Set action when user click on the Connect button.
+        // Sets action when user click on the Connect button.
         private void btnConnect_Click(object sender, EventArgs e)
         {
             this.connect(this, e);
         }
 
-        // Display a new form to add a channel when clicking on the add button.
+        // Displays a new form to add a channel when clicking on the add button.
         private void btnAddChannel_Click(object sender, EventArgs e)
         {
             NewChannelDialog dialog = new NewChannelDialog();
@@ -58,16 +58,16 @@ namespace Chat_Client.View
             dialog.Dispose();
         }
 
-        // Check the validity of the channels parameters entered
+        // Checks the validity of the channels parameters entered.
         private Boolean ChannelCheck(NewChannelDialog dialog)
         {
-            // Display dialog while a correct name is entered or user quit
+            // Displays dialog while a correct name is entered or user quit.
             do
             {
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
                     Client client;
-                    // Channel name or Uri cannot be emtpy and 2 channel can't have the same name nor Uri
+                    // Channel name or Uri cannot be emtpy and 2 channel can't have the same name nor Uri.
                     if (dialog.getTxtBoxChannelName().Text.Equals(""))
                         MessageBox.Show("Please enter a channel name !");
                     else if (this.chatClient.getClient(dialog.getTxtBoxChannelName().Text) != null)
@@ -85,7 +85,7 @@ namespace Chat_Client.View
             return false;
         }
 
-        // Autoset username and password when user select channel in combobox
+        // Autosets username and password when user select channel in comboBox.
         private void comboBoxChannels_SelectedIndexChanged(object sender, EventArgs e)
         {
             Client client = this.chatClient.getClient(this.comboBoxChannels.Text);

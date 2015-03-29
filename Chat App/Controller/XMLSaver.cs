@@ -10,13 +10,12 @@ using System.Xml.Serialization;
 
 namespace Chat_Client.Controller
 {
-    // Class that allow to save/read IRC channels with infos to xml file
-
+    // Class that allow to save/read IRC channels with infos to xml file.
     public static class XMLSaver
     {
         private static String filename = "infos.xml";
 
-        // Write IRC channels list to xml file
+        // Writes IRC channels list to xml file.
         public static void WriteXml(List<Client> clients)
         {
             XmlSerializer xs = new XmlSerializer(typeof(List<Client>));
@@ -26,7 +25,7 @@ namespace Chat_Client.Controller
             }
         }
 
-        // Read xml file and return channels list
+        // Reads xml file and return channels list.
         public static List<Client> ReadXml()
         {
             List<Client> clients = null;

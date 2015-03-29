@@ -84,11 +84,15 @@ namespace Chat_Client
             }
         }
 
-        // Remove a tab when clicking on close area.
+        // Removes a tab when clicking on close area.
         private void tabControl_MouseDown(object sender, MouseEventArgs e)
         {
             if (this.isOnCloseArea(e))
+            {
+                if (this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls[0].GetType() == typeof(ChatTab))
+                    ((ChatTab)this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls[0]).closeConnection();
                 this.tabControl.TabPages.RemoveAt(this.tabControl.SelectedIndex);
+        }
         }
 
         private bool isOnCloseArea(MouseEventArgs e)
@@ -115,7 +119,7 @@ namespace Chat_Client
             tab.connect += createConnection;
         }
 
-        // Launch new channel connection when clicking on button Connect.
+        // Launches new channel connection when clicking on button Connect.
         private void createConnection(object sender, EventArgs e)
         {
             ConnectionTab tab = (ConnectionTab)sender;
@@ -224,7 +228,6 @@ namespace Chat_Client
             }
 
         }
-
     }
 }
 

@@ -15,6 +15,7 @@ namespace Chat_Server
     {
         static void Main(string[] args)
         {
+            // We lauch the server.
             Server server = new Server();
             server.start();
         }
