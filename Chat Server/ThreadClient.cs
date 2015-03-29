@@ -137,6 +137,7 @@ namespace Chat_Server
 
         private void sendWelcome(Channel channel, String username)
         {
+            Thread.Sleep(1);
             Message message = new Message("NewMessage");
             message.addArgument("text", "Welcome on channel " + channel.Uri);
             this.client.Connection.sendMessage(message);
@@ -190,8 +191,9 @@ namespace Chat_Server
         // Send message to all clients connected to channel
         private void broadcastMessage(Message message)
         {
+            Console.WriteLine(message.cmd);
             foreach (Client client in this.client.Channel.getClientsList())
-                if (client != this.client)
+                if (client != this.client && client.Connection != null)
                     client.Connection.sendMessage(message);
         }
     }
