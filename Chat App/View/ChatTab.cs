@@ -54,11 +54,14 @@ namespace Chat_Client
             }
         }
 
+        // If a user name is cliqued.
         private void listboxContextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             this.listboxContextMenu.Hide();
+            // If "Start private chat" is cliqued.
             if (e.ClickedItem.ToString().Equals("Start private chat"))
             {
+                // Creation of the private chat channel/
                 Chat_Library.Model.Message message = new Chat_Library.Model.Message("NewPrivateChat");
                 message.addArgument("name", this.clientSelected);
                 client.Connection.sendMessage(message);
@@ -78,6 +81,7 @@ namespace Chat_Client
             Chat_Library.Model.Message message;
             while (this.client.Connection.isAvailable())
             {
+                // Recognize the message.
                 if ((message = this.client.Connection.getMessage()) != null)
                 {
                     if (message.cmd.Equals("ClientsList"))
@@ -188,7 +192,8 @@ namespace Chat_Client
             Clipboard.Clear();
             Clipboard.SetImage(bitmap);
             DataFormats.Format format = DataFormats.GetFormat(DataFormats.Bitmap);
-            this.txtBoxDiscussion.ReadOnly = false; // Disable read only else it can not paste 
+            // Disable read only else it can not paste 
+            this.txtBoxDiscussion.ReadOnly = false;
             this.txtBoxDiscussion.Select(this.txtBoxDiscussion.TextLength, 1);
             this.txtBoxDiscussion.Paste(format);
             this.txtBoxDiscussion.ReadOnly = true;

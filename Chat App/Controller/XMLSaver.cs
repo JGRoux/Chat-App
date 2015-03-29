@@ -15,6 +15,7 @@ namespace Chat_Client.Controller
     {
         private static String filename = "infos.xml";
 
+        // Serialize
         // Writes IRC channels list to xml file.
         public static void WriteXml(List<Client> clients)
         {
@@ -24,7 +25,7 @@ namespace Chat_Client.Controller
                 xs.Serialize(sw, clients);
             }
         }
-
+        // Deserialize.
         // Reads xml file and return channels list.
         public static List<Client> ReadXml()
         {

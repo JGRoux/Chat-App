@@ -12,6 +12,7 @@ namespace Chat_Client.Model
     {
         public List<Client> clientsList { get; set; }
 
+        // Initiate ChatClient.
         public ChatClient()
         {
             this.clientsList = XMLSaver.ReadXml();
