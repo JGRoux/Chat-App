@@ -185,7 +185,7 @@ namespace Chat_Client
                 }
 
                 Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
-                message.addArgument("channel", Uri[1]);
+                message.addArgument("channel", channelName);
                 message.addArgument("username", client.Username);
                 message.addArgument("password", client.Password);
                 client.Connection.sendMessage(message);
