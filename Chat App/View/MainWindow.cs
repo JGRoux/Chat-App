@@ -165,6 +165,7 @@ namespace Chat_Client
 
         private void chatTab_CreatePrivateChat(object sender, EventArgs e)
         {
+            Console.WriteLine("hello toi");
             var chatTabCaller = sender as ChatTab;
 
             try
