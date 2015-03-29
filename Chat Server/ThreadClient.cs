@@ -48,6 +48,7 @@ namespace Chat_Server
                     else if (message.cmd.Equals("NewPrivateChat"))
                         this.newPrivateChat(message);
 
+
                     //Reset the timer
                     this.timer.Stop();
                     this.timer.Start();
@@ -57,7 +58,7 @@ namespace Chat_Server
 
         private void newPrivateChat(Message message)
         {
-            Console.WriteLine("Create new channel:" + this.client.ToString());
+            Console.WriteLine("Create new private channel:" + this.client.Channel.Uri + ": " + this.client.Username + " & " + message.getArg("name"));
             Channel channel = new Channel(null, this.client.Channel.Uri + ": " + this.client.Username + " & " + message.getArg("name"));
             this.channelsList.Add(channel);
             Client tmpReceiver = this.client.Channel.getClient(message.getArg("name"));
@@ -70,18 +71,14 @@ namespace Chat_Server
 
             Message msg = new Message("NewPrivateChat");
             msg.addArgument("name", this.client.Username);
-            receiver.Connection.sendMessage(msg);
+            tmpReceiver.Connection.sendMessage(msg);
         }
 
         private void TimeOut(object source, ElapsedEventArgs e)
         {
+            this.client.isConnected = false;
             this.broadcastClientDisconnected();
-            connection.closeSocket();
-            foreach (Channel channel in channelsList)
-            {
-                channel.getClientsList().Remove(client);
-            }
-
+            this.connection.closeSocket();
         }
 
         // Authentification du client
@@ -130,7 +127,7 @@ namespace Chat_Server
 
         private void setConnectedClient(Client client, Channel channel)
         {
-            Console.WriteLine("Client " + client.Username + " is now connected to channel " + channel.Name);
+            Console.WriteLine("Client " + client.Username + " is now connected to channel " + channel.Uri);
             this.client = client;
             this.client.isConnected = true;
             this.client.Connection = this.connection;

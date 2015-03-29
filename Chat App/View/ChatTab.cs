@@ -57,6 +57,9 @@ namespace Chat_Client
             this.listboxContextMenu.Hide();
             if (e.ClickedItem.ToString().Equals("Start private chat"))
             {
+                Chat_Library.Model.Message message = new Chat_Library.Model.Message("NewPrivateChat");
+                message.addArgument("name", this.clientSelected);
+                client.Connection.sendMessage(message);
                 CreatePrivateChat(this, e);
             }
         }
