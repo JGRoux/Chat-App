@@ -165,7 +165,6 @@ namespace Chat_Client
 
         private void chatTab_CreatePrivateChat(object sender, EventArgs e)
         {
-            Console.WriteLine("hello toi");
             var chatTabCaller = sender as ChatTab;
 
             try
@@ -174,19 +173,27 @@ namespace Chat_Client
                 client.Connection = new Connection(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
                 String[] Uri = client.Channel.Uri.Split('/');
                 client.Connection.connect(Uri[0], 8000);
-                String channelName = Uri[1] + ": " + client.Username + " & " + chatTabCaller.clientSelected;
+                String channelName = Uri[1] + ": " + client.Username + " & " + chatTabCaller.clientSelected.Username;
                 Chat_Library.Model.Message message = new Chat_Library.Model.Message("NewPrivateChat");
                 message.addArgument("channel", channelName);
                 message.addArgument("username", client.Username);
                 message.addArgument("password", client.Password);
+                message.addArgument("clientSelected", chatTabCaller.clientSelected.Username);
                 client.Connection.sendMessage(message);
                 if (client.Connection.getMessage().cmd.Equals("Connected"))
                 {
                     ChatTab chatTab = new ChatTab(client);
                     chatTab.Dock = System.Windows.Forms.DockStyle.Fill;
-                    this.tabControl.TabPages[this.tabControl.SelectedIndex].Text = channelName + "     ";
-                    this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Clear();
+
+                    this.tabControl.TabPages[this.tabControl.TabPages.Count - 1].Controls.Clear();
+                    this.tabControl.TabPages.Insert(this.tabControl.TabPages.Count - 1, channelName + "     ");
+                    this.tabControl.SelectedIndex = this.tabControl.TabPages.Count - 2;
                     this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(chatTab);
+
+
+                    //this.tabControl.TabPages[this.tabControl.SelectedIndex].Text = channelName + "     ";
+                    //this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Clear();
+                    //this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(chatTab);                    
 
                     chatTab.CreatePrivateChat += chatTab_CreatePrivateChat;
                 }

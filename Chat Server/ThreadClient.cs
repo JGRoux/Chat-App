@@ -45,8 +45,8 @@ namespace Chat_Server
                         this.reqClients();
                     else if (message.cmd.Equals("Broadcast"))
                         this.broadcastIncomingMessage(message);
-                    else if (message.cmd.Equals("Start private chat"))
-                        this.startPrivateChat(message);
+                    else if (message.cmd.Equals("NewPrivateChat"))
+                        this.newPrivateChat(message);
                     
                     //Reset the timer
                     this.timer.Stop();
@@ -55,7 +55,7 @@ namespace Chat_Server
             }
         }
 
-        private void startPrivateChat(Message message)
+        private void newPrivateChat(Message message)
         {
             Console.WriteLine("Create new channel:" + message.getArg("channel"));
             Channel channel = new Channel(null, message.getArg("channel"));
