@@ -48,7 +48,6 @@ namespace Chat_Client
             {
                 this.listboxContextMenu.Items.Add("Start private chat");
             }
-
         }
 
         private void listboxContextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -67,6 +66,7 @@ namespace Chat_Client
             this.client.Connection.sendMessage(message);
         }
 
+        // Threaded method to continuously listen to receive message
         private void getMessages()
         {
             Chat_Library.Model.Message message;
@@ -95,6 +95,7 @@ namespace Chat_Client
         private delegate void setNewText(Chat_Library.Model.Message message);
         private delegate void setNewPicture(Chat_Library.Model.Message message);
 
+        // Set the whole clients connected list
         private void setClientList(Chat_Library.Model.Message message)
         {
             int i = 0;
@@ -106,18 +107,21 @@ namespace Chat_Client
             this.txtBoxDiscussion.Text += "There are currently " + i.ToString() + " users connected" + Environment.NewLine;
         }
 
+        // Add a client to the connected client list
         private void setClient(Chat_Library.Model.Message message)
         {
             this.listBoxUsers.Items.Add(message.getArg("name"));
             this.txtBoxDiscussion.Text += "Client " + message.getArg("name") + " is now connected" + Environment.NewLine;
         }
 
+        // Remove a client to the connected client list
         private void removeClient(Chat_Library.Model.Message message)
         {
             this.listBoxUsers.Items.Remove(message.getArg("name"));
             this.txtBoxDiscussion.Text += "Client " + message.getArg("name") + " has disconnected" + Environment.NewLine;
         }
 
+        // Set received text into the txtboxdiscussion
         private void setText(Chat_Library.Model.Message message)
         {
             if (message.getArg("name") != null)
@@ -127,6 +131,7 @@ namespace Chat_Client
                     this.txtBoxDiscussion.Text += text + Environment.NewLine;
         }
 
+        // Set received picture into the txtboxdiscussion
         private void setPicture(Chat_Library.Model.Message message)
         {
             /*if (message.getArg("name") != null)
@@ -196,6 +201,11 @@ namespace Chat_Client
                 this.txtBoxDiscussion.Text += "Me: " + this.txtBoxMessage.Text + Environment.NewLine;
                 this.txtBoxMessage.Text = "";
             }
+        }
+
+        private void txtBoxDiscussion_MouseDown(object sender, MouseEventArgs e)
+        {
+            this.txtBoxMessage.Focus();
         }
     }
 }

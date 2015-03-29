@@ -64,18 +64,23 @@
             // 
             // txtBoxDiscussion
             // 
+            this.txtBoxDiscussion.BackColor = System.Drawing.SystemColors.Window;
+            this.txtBoxDiscussion.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtBoxDiscussion.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtBoxDiscussion.Location = new System.Drawing.Point(0, 0);
             this.txtBoxDiscussion.Name = "txtBoxDiscussion";
+            this.txtBoxDiscussion.ReadOnly = true;
             this.txtBoxDiscussion.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             this.txtBoxDiscussion.Size = new System.Drawing.Size(250, 338);
             this.txtBoxDiscussion.TabIndex = 0;
             this.txtBoxDiscussion.Text = "";
+            this.txtBoxDiscussion.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtBoxDiscussion_MouseDown);
             // 
             // listBoxUsers
             // 
             this.listBoxUsers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBoxUsers.FormattingEnabled = true;
+            this.listBoxUsers.IntegralHeight = false;
             this.listBoxUsers.Location = new System.Drawing.Point(0, 0);
             this.listBoxUsers.Name = "listBoxUsers";
             this.listBoxUsers.Size = new System.Drawing.Size(187, 338);

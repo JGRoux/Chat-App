@@ -62,7 +62,7 @@ namespace Chat_Library.Controller
                         msg += Encoding.UTF8.GetString(buffer);
                     }
                 }
-                catch (System.Runtime.Serialization.SerializationException e)
+                catch (Exception e)
                 {
                     Console.WriteLine("erreur:" + e.ToString());
                 }
