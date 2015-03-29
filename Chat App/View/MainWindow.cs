@@ -178,21 +178,19 @@ namespace Chat_Client
                 if (chatTabCaller.clientSelected != null)
                 {
                     channelName = Uri[1] + ": " + client.Username + " & " + chatTabCaller.clientSelected;
-                    Chat_Library.Model.Message message = new Chat_Library.Model.Message("NewPrivateChat");
-                    message.addArgument("name", chatTabCaller.clientSelected);
-                    client.Connection.sendMessage(message);
                 }
                 else
                 {
                     channelName = Uri[1] + ": " + chatTabCaller.clientCaller + " & " + client.Username;
-                    Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
-                    message.addArgument("channel", Uri[1]);
-                    message.addArgument("username", client.Username);
-                    message.addArgument("password", client.Password);
-                    client.Connection.sendMessage(message);
-                    if (client.Connection.getMessage().cmd.Equals("Connected"))
-                        Console.WriteLine("ok");
                 }
+
+                Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
+                message.addArgument("channel", Uri[1]);
+                message.addArgument("username", client.Username);
+                message.addArgument("password", client.Password);
+                client.Connection.sendMessage(message);
+                if (client.Connection.getMessage().cmd.Equals("Connected"))
+                    Console.WriteLine("ok");
 
                 ChatTab chatTab = new ChatTab(client);
                 chatTab.Dock = System.Windows.Forms.DockStyle.Fill;
