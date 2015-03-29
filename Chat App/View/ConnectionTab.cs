@@ -95,5 +95,10 @@ namespace Chat_Client.View
                 this.txtBoxPwd.Text = client.Password;
             }
         }
+
+        private void pictureBoxChannelUriHelp_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -43,6 +43,7 @@ namespace Chat_Client
             this.getConnectedClients();
         }
 
+        // Set contextmenu on listbox clients
         private void listboxContextMenu_Opening(object sender, CancelEventArgs e)
         {
             // Clears the menu and add custom items.
@@ -54,14 +55,12 @@ namespace Chat_Client
             }
         }
 
-        // If a user name is cliqued.
+        // Start private chat on selected user
         private void listboxContextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             this.listboxContextMenu.Hide();
-            // If "Start private chat" is cliqued.
             if (e.ClickedItem.ToString().Equals("Start private chat"))
             {
-                // Creation of the private chat channel/
                 Chat_Library.Model.Message message = new Chat_Library.Model.Message("NewPrivateChat");
                 message.addArgument("name", this.clientSelected);
                 client.Connection.sendMessage(message);
@@ -69,6 +68,7 @@ namespace Chat_Client
             }
         }
 
+        // Send message to get clients connected
         private void getConnectedClients()
         {
             Chat_Library.Model.Message message = new Chat_Library.Model.Message("ReqClients");
@@ -81,27 +81,34 @@ namespace Chat_Client
             Chat_Library.Model.Message message;
             while (this.client.Connection.isAvailable())
             {
-                // Recognize the message.
-                if ((message = this.client.Connection.getMessage()) != null)
+                try
                 {
-                    if (message.cmd.Equals("ClientsList"))
-                        this.Invoke((setConnectedClientList)setClientList, message);
-                    else if (message.cmd.Equals("NewClient"))
-                        this.Invoke((setConnectedClient)setClient, message);
-                    else if (message.cmd.Equals("RemoveClient"))
-                        this.Invoke((setRemovedClient)removeClient, message);
-                    else if (message.cmd.Equals("NewPrivateChat"))
+                    if ((message = this.client.Connection.getMessage()) != null)
                     {
-                        this.clientSelected = null;
-                        this.clientCaller = message.getArg("name");
-                        this.Invoke((setNewPrivateChat)newPrivateChat);
-                    }
+                        if (message.cmd.Equals("ClientsList"))
+                            this.Invoke((setConnectedClientList)setClientList, message);
+                        else if (message.cmd.Equals("NewClient"))
+                            this.Invoke((setConnectedClient)setClient, message);
+                        else if (message.cmd.Equals("RemoveClient"))
+                            this.Invoke((setRemovedClient)removeClient, message);
+                        else if (message.cmd.Equals("NewPrivateChat"))
+                        {
+                            this.clientSelected = null;
+                            this.clientCaller = message.getArg("name");
+                            this.Invoke((setNewPrivateChat)newPrivateChat);
+                        }
 
-                    else if (message.cmd.Equals("NewMessage"))
-                        if (message.getArg("text") != null)
-                            this.Invoke((setNewText)setText, message);
-                        else if (message.getArg("picture") != null)
-                            this.Invoke((setNewPicture)setPicture, message);
+                        else if (message.cmd.Equals("NewMessage"))
+                            if (message.getArg("text") != null)
+                                this.Invoke((setNewText)setText, message);
+                            else if (message.getArg("picture") != null)
+                                this.Invoke((setNewPicture)setPicture, message);
+                    }
+                }
+                catch (SocketException)
+                {
+                    this.closeConnection();
+                    return;
                 }
             }
         }
@@ -113,6 +120,7 @@ namespace Chat_Client
         private delegate void setNewPicture(Chat_Library.Model.Message message);
         private delegate void setNewPrivateChat();
 
+        // Start new private chat
         private void newPrivateChat()
         {
             CreatePrivateChat(this, new EventArgs());
@@ -121,13 +129,16 @@ namespace Chat_Client
         // Sets the whole clients connected list.
         private void setClientList(Chat_Library.Model.Message message)
         {
-            int i = 0;
+            int i = 1;
             foreach (String name in message.getArgContents("name"))
             {
                 this.listBoxUsers.Items.Add(name);
                 i++;
             }
-            this.txtBoxDiscussion.AppendText("There are currently " + i.ToString() + " users connected\n");
+            if(i == 1)
+                this.txtBoxDiscussion.Text += "There are currently " + i.ToString() + " user connected" + Environment.NewLine;
+            else
+                this.txtBoxDiscussion.Text += "There are currently " + i.ToString() + " users connected" + Environment.NewLine;
         }
 
         // Adds a client to the connected client list.
@@ -192,8 +203,7 @@ namespace Chat_Client
             Clipboard.Clear();
             Clipboard.SetImage(bitmap);
             DataFormats.Format format = DataFormats.GetFormat(DataFormats.Bitmap);
-            // Disable read only else it can not paste 
-            this.txtBoxDiscussion.ReadOnly = false;
+            this.txtBoxDiscussion.ReadOnly = false; // Disable read only else it can not paste 
             this.txtBoxDiscussion.Select(this.txtBoxDiscussion.TextLength, 1);
             this.txtBoxDiscussion.Paste(format);
             this.txtBoxDiscussion.ReadOnly = true;
@@ -214,7 +224,7 @@ namespace Chat_Client
                 this.sendMessage();
 
                 // Allows to delete the 'ding' sound.
-                e.Handled = e.SuppressKeyPress = true; 
+                e.Handled = e.SuppressKeyPress = true;
             }
         }
 
@@ -249,6 +259,7 @@ namespace Chat_Client
             System.Diagnostics.Process.Start(e.LinkText);
         }
 
+        // Close the current connection
         public void closeConnection()
         {
             this.client.Connection.closeSocket();

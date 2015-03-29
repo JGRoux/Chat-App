@@ -48,17 +48,17 @@ namespace Chat_Server
             {
                 try
                 {
-                if ((message = this.connection.getMessage()) != null)
-                {
-                    // The available commands.
-                    if (message.cmd.Equals("Auth"))
-                        this.authClient(message);
-                    else if (message.cmd.Equals("ReqClients"))
-                        this.reqClients();
-                    else if (message.cmd.Equals("Broadcast"))
-                        this.broadcastIncomingMessage(message);
-                    else if (message.cmd.Equals("NewPrivateChat"))
-                        this.newPrivateChat(message);
+                    if ((message = this.connection.getMessage()) != null)
+                    {
+                        // The available commands.
+                        if (message.cmd.Equals("Auth"))
+                            this.authClient(message);
+                        else if (message.cmd.Equals("ReqClients"))
+                            this.reqClients();
+                        else if (message.cmd.Equals("Broadcast"))
+                            this.broadcastIncomingMessage(message);
+                        else if (message.cmd.Equals("NewPrivateChat"))
+                            this.newPrivateChat(message);
 
 
                         //Reset the timer
@@ -66,14 +66,15 @@ namespace Chat_Server
                         this.timerOut.Start();
                     }
                 }
-                catch (SocketException e)
+                catch (SocketException)
                 {
+                    Console.WriteLine("sd");
                     this.closeConnection();
                     return;
                 }
-                Console.WriteLine("loop");
             }
         }
+
 
         private void newPrivateChat(Message message)
         {
@@ -93,6 +94,7 @@ namespace Chat_Server
             tmpReceiver.Connection.sendMessage(msg);
         }
 
+        //
         private void checkConnection(object source, ElapsedEventArgs e)
         {
             if (!this.connection.isAvailable())
@@ -104,11 +106,14 @@ namespace Chat_Server
             this.closeConnection();
         }
 
+        // Close connection
         private void closeConnection()
         {
             this.client.isConnected = false;
             this.broadcastClientDisconnected();
             this.connection.closeSocket();
+            this.timerCheck.Stop();
+            this.timerOut.Stop();
         }
 
         // Authentification du client
@@ -119,6 +124,7 @@ namespace Chat_Server
                 {
                     // If channel exist we test the password
                     this.checkCredentials(message, channel);
+
                     return;
                 }
 
@@ -155,6 +161,7 @@ namespace Chat_Server
             }
         }
 
+        // Indicate client connected
         private void setConnectedClient(Client client, Channel channel)
         {
             Console.WriteLine("Client " + client.Username + " is now connected to channel " + channel.Uri);
@@ -165,6 +172,7 @@ namespace Chat_Server
             this.sendWelcome(channel, this.client.Username);
         }
 
+        // Welcome channel message
         private void sendWelcome(Channel channel, String username)
         {
             Message message = new Message("NewMessage");
