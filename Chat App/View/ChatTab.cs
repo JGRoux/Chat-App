@@ -47,6 +47,7 @@ namespace Chat_Client
             if (this.listBoxUsers.SelectedIndex != -1)
             {
                 this.listboxContextMenu.Items.Add("Start private chat");
+                clientSelected = this.client.Channel.getClient(listBoxUsers.SelectedItem.ToString());
             }
         }
 
@@ -55,7 +56,6 @@ namespace Chat_Client
             this.listboxContextMenu.Hide();
             if (e.ClickedItem.ToString().Equals("Start private chat"))
             {
-                clientSelected = this.client.Channel.getClient(listBoxUsers.SelectedItem.ToString());
                 CreatePrivateChat(this, e);
             }
         }
