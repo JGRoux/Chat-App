@@ -165,31 +165,40 @@ namespace Chat_Client
 
         private void channelAlreadyOpen()
         {
-            
+
         }
 
         private void chatTab_CreatePrivateChat(object sender, EventArgs e)
         {
             var chatTabCaller = sender as ChatTab;
 
-            try
+            //try
             {
-                Client oldClient = chatTabCaller.client;
-                Client newClient = new Client(oldClient.Channel);
-                newClient.Username = oldClient.Username;
-                newClient.Password = oldClient.Password;
-                newClient.Connection = new Connection(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-                String[] Uri = oldClient.Channel.Uri.Split('/');
-                newClient.Connection.connect(Uri[0], 8000);
+                Client oldClient = null;
+                String channelURI;
+                String[] Uri;
 
                 if (chatTabCaller.clientSelected != null)
                 {
-                    newClient.Channel.Uri = Uri[1] + ": " + newClient.Username + " & " + chatTabCaller.clientSelected;
+                    foreach (Client client in this.chatClient.clientsList)
+                        if (client.Username.Equals(chatTabCaller.clientSelected))
+                            oldClient = client;
+                    Uri = oldClient.Channel.Uri.Split('/');
+                    channelURI = Uri[1] + ": " + chatTabCaller.client.Username + " & " + chatTabCaller.clientSelected;
                 }
                 else
                 {
-                    newClient.Channel.Uri = Uri[1] + ": " + chatTabCaller.clientCaller + " & " + newClient.Username;
+                    oldClient = chatTabCaller.client;
+                    Uri = oldClient.Channel.Uri.Split('/');
+                    channelURI = Uri[1] + ": " + chatTabCaller.clientCaller + " & " + chatTabCaller.client.Username;
                 }
+                Client newClient = new Client(oldClient.Channel);
+                newClient.Channel.Uri = channelURI;
+                newClient.Username = oldClient.Username;
+                newClient.Password = oldClient.Password;
+                newClient.Connection = new Connection(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+                
+                newClient.Connection.connect(Uri[0], 8000);
 
                 Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
                 message.addArgument("channel", newClient.Channel.Uri);
@@ -198,30 +207,20 @@ namespace Chat_Client
                 newClient.Connection.sendMessage(message);
                 if (newClient.Connection.getMessage().cmd.Equals("Connected"))
                 {
-
                     ChatTab chatTab = new ChatTab(newClient);
                     chatTab.Dock = System.Windows.Forms.DockStyle.Fill;
 
-                    this.tabControl.TabPages[this.tabControl.TabPages.Count - 1].Controls.Clear();
                     this.tabControl.TabPages.Insert(this.tabControl.TabPages.Count - 1, newClient.Channel.Uri + "     ");
                     this.tabControl.SelectedIndex = this.tabControl.TabPages.Count - 2;
                     this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(chatTab);
 
                     chatTab.CreatePrivateChat += chatTab_CreatePrivateChat;
                 }
-
-                /*if (chatTabCaller.clientSelected != null)
-                {
-                    Console.WriteLine("OK1");
-                    Chat_Library.Model.Message messageOtherSide = new Chat_Library.Model.Message("NewPrivateChatOtherSide");
-                    message.addArgument("name", chatTabCaller.clientSelected);
-                    client.Connection.sendMessage(messageOtherSide);
-                }*/
             }
-            catch (Exception exception)
+            //catch (Exception exception)
             {
-                MessageBox.Show("Impossible to establish connection to server !");
-                Console.WriteLine(exception.ToString());
+                //MessageBox.Show("Impossible to establish connection to server !");
+                //Console.WriteLine(exception.ToString());
             }
 
         }

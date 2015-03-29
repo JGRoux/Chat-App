@@ -86,10 +86,9 @@ namespace Chat_Client
                         this.Invoke((setRemovedClient)removeClient, message);
                     else if (message.cmd.Equals("NewPrivateChat"))
                     {
-                        Console.WriteLine("OK2");
                         this.clientSelected = null;
                         this.clientCaller = message.getArg("name");
-                        CreatePrivateChat(this, new EventArgs());
+                        this.Invoke((setNewPrivateChat)newPrivateChat);
                     }
 
                     else if (message.cmd.Equals("NewMessage"))
@@ -106,6 +105,12 @@ namespace Chat_Client
         private delegate void setRemovedClient(Chat_Library.Model.Message message);
         private delegate void setNewText(Chat_Library.Model.Message message);
         private delegate void setNewPicture(Chat_Library.Model.Message message);
+        private delegate void setNewPrivateChat();
+
+        private void newPrivateChat()
+        {
+            CreatePrivateChat(this, new EventArgs());
+        }
 
         // Set the whole clients connected list
         private void setClientList(Chat_Library.Model.Message message)
