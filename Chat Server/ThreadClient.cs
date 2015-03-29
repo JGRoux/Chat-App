@@ -70,7 +70,7 @@ namespace Chat_Server
             foreach (Channel channel in channelsList)
             {
                 channel.getClientsList().Remove(client);
-            }*/
+            }
 
         }
 
@@ -184,7 +184,7 @@ namespace Chat_Server
         private void broadcastMessage(Message message)
         {
             foreach (Client client in this.client.Channel.getClientsList())
-                
+                if(client != this.client)
                     client.Connection.sendMessage(message);
         }
     }
