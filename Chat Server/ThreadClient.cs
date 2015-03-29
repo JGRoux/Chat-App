@@ -24,7 +24,7 @@ namespace Chat_Server
             this.connection = connection;
             this.channelsList = channelsList;
             Thread newThreadClient = new Thread(threadClientMethod);
-            newThreadClient.Start();            
+            newThreadClient.Start();
 
             this.timer = new System.Timers.Timer();
             this.timer.Elapsed += new ElapsedEventHandler(TimeOut);
@@ -47,8 +47,7 @@ namespace Chat_Server
                         this.broadcastIncomingMessage(message);
                     else if (message.cmd.Equals("NewPrivateChat"))
                         this.newPrivateChat(message);
-                        
-                    
+
                     //Reset the timer
                     this.timer.Stop();
                     this.timer.Start();
@@ -61,14 +60,14 @@ namespace Chat_Server
             Console.WriteLine("Create new channel:" + this.client.ToString());
             Channel channel = new Channel(null, this.client.Channel.Uri + ": " + this.client.Username + " & " + message.getArg("name"));
             this.channelsList.Add(channel);
-            Client tmpReceiver  = this.client.Channel.getClient(message.getArg("name"));
+            Client tmpReceiver = this.client.Channel.getClient(message.getArg("name"));
             Client sender = new Client(channel);
             Client receiver = new Client(channel);
             sender.setCredentials(this.client.Username, this.client.Password);
             receiver.setCredentials(tmpReceiver.Username, tmpReceiver.Password);
             channel.addClient(sender);
             channel.addClient(receiver);
-            
+
             Message msg = new Message("NewPrivateChat");
             msg.addArgument("name", this.client.Username);
             receiver.Connection.sendMessage(msg);
@@ -81,7 +80,7 @@ namespace Chat_Server
             foreach (Channel channel in channelsList)
             {
                 channel.getClientsList().Remove(client);
-        }
+            }
 
         }
 
@@ -131,7 +130,7 @@ namespace Chat_Server
 
         private void setConnectedClient(Client client, Channel channel)
         {
-            Console.WriteLine("Client " + client.Username + " is now connected to channel "+ channel.Name);
+            Console.WriteLine("Client " + client.Username + " is now connected to channel " + channel.Name);
             this.client = client;
             this.client.isConnected = true;
             this.client.Connection = this.connection;
@@ -195,7 +194,7 @@ namespace Chat_Server
         private void broadcastMessage(Message message)
         {
             foreach (Client client in this.client.Channel.getClientsList())
-                if(client != this.client)
+                if (client != this.client)
                     client.Connection.sendMessage(message);
         }
     }
