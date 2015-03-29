@@ -14,11 +14,13 @@ namespace Chat_Server
     public class Server
     {
         private Socket serverSocket;
+
+        // The list of the channels of this particular server.
         private List<Channel> channelsList = new List<Channel>();
 
         public Server()
         {
-            // Create the server socket with the TCP protocol.
+            // Creates the server socket with the TCP protocol.
             this.serverSocket = new Socket(AddressFamily.InterNetwork,
                              SocketType.Stream,
                              ProtocolType.Tcp);
@@ -27,12 +29,14 @@ namespace Chat_Server
             this.serverSocket.Bind(new IPEndPoint(Dns.GetHostAddresses("127.0.0.1")[0], 8000));
         }
 
-        // Infinite loop to wait for client connection.
+        // Infinite loop to wait for a client connection.
         public void start()
         {
             while (true)
             {
                 Socket newClientSocket = listenAndAcceptSocket();
+
+                // Create a new thread for the client who just connected to the server.
                 new ThreadClient(new Connection(newClientSocket), channelsList);
             }
         }

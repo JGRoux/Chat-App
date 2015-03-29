@@ -16,6 +16,8 @@ namespace Chat_Server
     {
         private Client client;
         private Connection connection;
+
+        // The list of the client's channels.
         private List<Channel> channelsList;
         private System.Timers.Timer timer;
 
@@ -26,12 +28,16 @@ namespace Chat_Server
             Thread newThreadClient = new Thread(threadClientMethod);
             newThreadClient.Start();
 
+            // Creates the timer.
             this.timer = new System.Timers.Timer();
             this.timer.Elapsed += new ElapsedEventHandler(TimeOut);
+
+            // After this time, the client is considered AFK.
             this.timer.Interval = 1000000;
             this.timer.Enabled = true;
         }
 
+        // The method launched in the thread.
         private void threadClientMethod()
         {
             Message message;
@@ -39,6 +45,7 @@ namespace Chat_Server
             {
                 if ((message = this.connection.getMessage()) != null)
                 {
+                    // The available commands.
                     if (message.cmd.Equals("Auth"))
                         this.authClient(message);
                     else if (message.cmd.Equals("ReqClients"))
@@ -48,8 +55,7 @@ namespace Chat_Server
                     else if (message.cmd.Equals("NewPrivateChat"))
                         this.newPrivateChat(message);
 
-
-                    //Reset the timer
+                    // Reset the timer.
                     this.timer.Stop();
                     this.timer.Start();
                 }

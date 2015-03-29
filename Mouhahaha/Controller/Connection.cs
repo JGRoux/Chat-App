@@ -53,19 +53,19 @@ namespace Chat_Library.Controller
             String msg = "";
 
             do
+            {
+                try
                 {
-                    try
-                    {
                     if (this.socket.Available > 0)
                     {
                         this.socket.Receive(buffer, 1, SocketFlags.None);
                         msg += Encoding.UTF8.GetString(buffer);
                     }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("erreur:" + e.ToString());
-                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("erreur:" + e.ToString());
+                }
                 Thread.Sleep(1);
             } while (!msg.Contains(delimiter));
 
@@ -76,6 +76,7 @@ namespace Chat_Library.Controller
             return message;
         }
 
+        // Boolean to know if the Connection is available.
         public bool isAvailable()
         {
             return this.socket.Connected;
@@ -87,15 +88,12 @@ namespace Chat_Library.Controller
             this.socket.Close();
         }
 
-        //Test if the socket is deconnected
+        // Test if the socket is deconnected.
         public bool isDeconnected()
         {
-            
-            //We make a Send call with 0 bytes
-            //If the send is a success, the socket is connected
+            // We make a Send call with 0 bytes: if the sending is a success, the socket is connected.
             byte[] buffer = new Byte[0];
 
-            
             try
             {
                 int result = this.socket.Send(buffer);
@@ -106,18 +104,16 @@ namespace Chat_Library.Controller
             catch (System.ObjectDisposedException e)
             {
                 Console.WriteLine("ObjectDisposedException, trying the connection of the socket");
+                Console.WriteLine(e.ToString());
                 return true;
             }
             catch (System.Net.Sockets.SocketException e)
             {
-
                 Console.WriteLine("Socket Excetption, trying the connection of the socket");
+                Console.WriteLine(e.ToString());
                 return true;
             }
             return true;
-         
-            //   return this.socket.Poll(10, SelectMode.SelectRead) && (this.socket.Available == 0) ;
-	   
         }
     }
 }
