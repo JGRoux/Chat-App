@@ -1,19 +1,19 @@
 # Chat-App
 C# IRC like chat application
 
-Client<br>
+**Client**<br>
 Permet de se connecter à plusieurs serveurs en simultané (gestion par onglets)<br>
 Permet de créer les channels sur les serveurs<br>
 Affiche les utilisateurs connectés sur la channel en temps réel<br>
 Permet d'envoyer des images<br>
 
-Serveur<br>
+**Serveur**<br>
 Support de plusieurs channels en simultané<br>
 Authentifications et créations des utilisateurs sur les channels<br>
 
 Le client et serveur partage une librarie dynamique gérant les connections et envoi de messages.
 
-Contributeurs:
+**Contributeurs:**
 - Alexandre Bensimon
 - Pierre Lahmi
 - Adrien de Sambres
