@@ -135,29 +135,34 @@ namespace Chat_Client
                 try
                 {
                     Client client = this.chatClient.getClient(tab.getComboBox().Text);
-                    client.setCredentials(tab.getTxtBoxUsername().Text, tab.getTxtBoxPwd().Text);
-                    client.Connection = new Connection(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-                    String[] Uri = client.Channel.Uri.Split('/');
-                    client.Connection.connect(Uri[0], 8000);
-                    Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
-                    message.addArgument("channel", Uri[1]);
-                    message.addArgument("username", client.Username);
-                    message.addArgument("password", client.Password);
-                    client.Connection.sendMessage(message);
-                    if (client.Connection.getMessage().cmd.Equals("Connected"))
-                    {
-                        this.chatClient.save(); // Save username and password
-                        ChatTab chatTab = new ChatTab(client);
-                        chatTab.Dock = System.Windows.Forms.DockStyle.Fill;
-                        this.tabControl.TabPages[this.tabControl.SelectedIndex].Text = tab.getComboBox().Text + "     ";
-                        this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Clear();
-                        this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(chatTab);
-
-                        chatTab.CreatePrivateChat += chatTab_CreatePrivateChat;
-                    }
+                    if (this.channelAlreadyOpen(client.Channel.Uri))
+                        MessageBox.Show("You cannot open to times the same channel !");
                     else
                     {
-                        MessageBox.Show("Wrong password !");
+                        client.setCredentials(tab.getTxtBoxUsername().Text, tab.getTxtBoxPwd().Text);
+                        client.Connection = new Connection(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+                        String[] Uri = client.Channel.Uri.Split('/');
+                        client.Connection.connect(Uri[0], 8000);
+                        Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
+                        message.addArgument("channel", Uri[1]);
+                        message.addArgument("username", client.Username);
+                        message.addArgument("password", client.Password);
+                        client.Connection.sendMessage(message);
+                        if (client.Connection.getMessage().cmd.Equals("Connected"))
+                        {
+                            this.chatClient.save(); // Save username and password
+                            ChatTab chatTab = new ChatTab(client);
+                            chatTab.Dock = System.Windows.Forms.DockStyle.Fill;
+                            this.tabControl.TabPages[this.tabControl.SelectedIndex].Text = tab.getComboBox().Text + "     ";
+                            this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Clear();
+                            this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(chatTab);
+
+                            chatTab.CreatePrivateChat += chatTab_CreatePrivateChat;
+                        }
+                        else
+                        {
+                            MessageBox.Show("Wrong password !");
+                        }
                     }
                 }
                 catch (Exception exception)
@@ -195,37 +200,42 @@ namespace Chat_Client
                         if (client.Username.Equals(chatTabCaller.clientSelected))
                             oldClient = client;
                     Uri = oldClient.Channel.Uri.Split('/');
-                    channelURI = Uri[1] + ": " + chatTabCaller.client.Username + " & " + chatTabCaller.clientSelected;
+                    channelURI = ": " + chatTabCaller.client.Username + " & " + chatTabCaller.clientSelected;
                 }
                 else
                 {
                     oldClient = chatTabCaller.client;
                     Uri = oldClient.Channel.Uri.Split('/');
-                    channelURI = Uri[1] + ": " + chatTabCaller.clientCaller + " & " + chatTabCaller.client.Username;
+                    channelURI = ": " + chatTabCaller.clientCaller + " & " + chatTabCaller.client.Username;
                 }
-                Client newClient = new Client(oldClient.Channel);
-                newClient.Channel.Uri = channelURI;
-                newClient.Username = oldClient.Username;
-                newClient.Password = oldClient.Password;
-                newClient.Connection = new Connection(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-
-                newClient.Connection.connect(Uri[0], 8000);
-
-                Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
-                message.addArgument("channel", newClient.Channel.Uri);
-                message.addArgument("username", newClient.Username);
-                message.addArgument("password", newClient.Password);
-                newClient.Connection.sendMessage(message);
-                if (newClient.Connection.getMessage().cmd.Equals("Connected"))
+                if (this.channelAlreadyOpen(channelURI))
+                    MessageBox.Show("You cannot open to times the same channel !");
+                else
                 {
-                    ChatTab chatTab = new ChatTab(newClient);
-                    chatTab.Dock = System.Windows.Forms.DockStyle.Fill;
+                    Client newClient = new Client(oldClient.Channel);
+                    newClient.Channel.Uri = Uri[1] + channelURI;
+                    newClient.Username = oldClient.Username;
+                    newClient.Password = oldClient.Password;
+                    newClient.Connection = new Connection(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
-                    this.tabControl.TabPages.Insert(this.tabControl.TabPages.Count - 1, newClient.Channel.Uri + "     ");
-                    this.tabControl.SelectedIndex = this.tabControl.TabPages.Count - 2;
-                    this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(chatTab);
+                    newClient.Connection.connect(Uri[0], 8000);
 
-                    chatTab.CreatePrivateChat += chatTab_CreatePrivateChat;
+                    Chat_Library.Model.Message message = new Chat_Library.Model.Message("Auth");
+                    message.addArgument("channel", channelURI);
+                    message.addArgument("username", newClient.Username);
+                    message.addArgument("password", newClient.Password);
+                    newClient.Connection.sendMessage(message);
+                    if (newClient.Connection.getMessage().cmd.Equals("Connected"))
+                    {
+                        ChatTab chatTab = new ChatTab(newClient);
+                        chatTab.Dock = System.Windows.Forms.DockStyle.Fill;
+
+                        this.tabControl.TabPages.Insert(this.tabControl.TabPages.Count - 1, newClient.Channel.Uri + "     ");
+                        this.tabControl.SelectedIndex = this.tabControl.TabPages.Count - 2;
+                        this.tabControl.TabPages[this.tabControl.SelectedIndex].Controls.Add(chatTab);
+
+                        chatTab.CreatePrivateChat += chatTab_CreatePrivateChat;
+                    }
                 }
             }
             catch (Exception exception)

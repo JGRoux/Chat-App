@@ -34,12 +34,5 @@ namespace Chat_Library.Model
             this.Username = username;
             this.Password = pwd;
         }
-
-        private String encrypt(String pwd)
-        {
-            byte[] data = System.Text.Encoding.ASCII.GetBytes(pwd);
-            data = new System.Security.Cryptography.SHA256Managed().ComputeHash(data);
-            return System.Text.Encoding.ASCII.GetString(data);
-        }
     }
 }

@@ -120,7 +120,7 @@
     <None Include="Resources\1424468312_ic_add_48px-48.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Mouhahaha\Shared Library.csproj">
+    <ProjectReference Include="..\Chat Library\Shared Library.csproj">
       <Project>{0db7b1bb-5001-40ae-8db0-b0075d52a908}</Project>
       <Name>Shared Library</Name>
     </ProjectReference>

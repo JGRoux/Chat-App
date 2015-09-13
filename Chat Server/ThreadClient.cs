@@ -68,7 +68,6 @@ namespace Chat_Server
                 }
                 catch (SocketException)
                 {
-                    Console.WriteLine("sd");
                     this.closeConnection();
                     return;
                 }
